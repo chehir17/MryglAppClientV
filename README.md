@@ -138,9 +138,9 @@ Just you can call the widget class and customize it with you parameters and you 
       onPressed: () {
         Navigator.of(context).pushNamed('/Pages', arguments: 2);
       },
-      color: Theme.of(context).accentColor,
+      color: Theme.of(context).colorScheme.secondary,
       text: Text('Verify'.toUpperCase(),
-          style: Theme.of(context).textTheme.title.merge(TextStyle(color: Theme.of(context).primaryColor))),
+          style: Theme.of(context).textTheme.titleMedium.merge(TextStyle(color: Theme.of(context).primaryColor))),
     ),
 //...
 ```
@@ -155,7 +155,7 @@ The main file contains global configuration (**Title / Themes / Font Family / Co
 ```dart
 //...
     return MaterialApp(
-      title: 'Restaurant Flutter UI',
+      titleMedium: 'Restaurant Flutter UI',
       initialRoute: '/',
       onGenerateRoute: RouteGenerator.generateRoute,
       debugShowCheckedModeBanner: false,

@@ -12,10 +12,10 @@ class SignUpWidget extends StatefulWidget {
 }
 
 class _SignUpWidgetState extends StateMVC<SignUpWidget> {
-  UserController _con;
+  late UserController _con;
 
   _SignUpWidgetState() : super(UserController()) {
-    _con = controller;
+    _con = controller as UserController;
   }
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,8 @@ class _SignUpWidgetState extends StateMVC<SignUpWidget> {
               child: Container(
                 width: config.App(context).appWidth(100),
                 height: config.App(context).appHeight(29.5),
-                decoration: BoxDecoration(color: Theme.of(context).accentColor),
+                decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondary),
               ),
             ),
             Positioned(
@@ -44,7 +45,7 @@ class _SignUpWidgetState extends StateMVC<SignUpWidget> {
                   S.of(context).lets_start_with_register,
                   style: Theme.of(context)
                       .textTheme
-                      .display3
+                      .displayMedium!
                       .merge(TextStyle(color: Theme.of(context).primaryColor)),
                 ),
               ),
@@ -76,13 +77,13 @@ class _SignUpWidgetState extends StateMVC<SignUpWidget> {
                       TextFormField(
                         keyboardType: TextInputType.text,
                         onSaved: (input) => _con.user.name = input,
-                        validator: (input) => input.length < 3
+                        validator: (input) => input!.length < 3
                             ? S.of(context).should_be_more_than_3_letters
                             : null,
                         decoration: InputDecoration(
                           labelText: S.of(context).full_name,
-                          labelStyle:
-                              TextStyle(color: Theme.of(context).accentColor),
+                          labelStyle: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary),
                           contentPadding: EdgeInsets.all(12),
                           hintText: S.of(context).john_doe,
                           hintStyle: TextStyle(
@@ -90,7 +91,7 @@ class _SignUpWidgetState extends StateMVC<SignUpWidget> {
                                   .focusColor
                                   .withOpacity(0.7)),
                           prefixIcon: Icon(Icons.person_outline,
-                              color: Theme.of(context).accentColor),
+                              color: Theme.of(context).colorScheme.secondary),
                           border: OutlineInputBorder(
                               borderSide: BorderSide(
                                   color: Theme.of(context)
@@ -115,8 +116,8 @@ class _SignUpWidgetState extends StateMVC<SignUpWidget> {
                         //validator: (input) => !input.contains('@') ? S.of(context).should_be_a_valid_email : null,
                         decoration: InputDecoration(
                           labelText: S.of(context).phone,
-                          labelStyle:
-                              TextStyle(color: Theme.of(context).accentColor),
+                          labelStyle: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary),
                           contentPadding: EdgeInsets.all(12),
                           hintText: 'XXX-XXX-XXX',
                           hintStyle: TextStyle(
@@ -124,7 +125,7 @@ class _SignUpWidgetState extends StateMVC<SignUpWidget> {
                                   .focusColor
                                   .withOpacity(0.7)),
                           prefixIcon: Icon(Icons.phone_android,
-                              color: Theme.of(context).accentColor),
+                              color: Theme.of(context).colorScheme.secondary),
                           border: OutlineInputBorder(
                               borderSide: BorderSide(
                                   color: Theme.of(context)
@@ -146,13 +147,13 @@ class _SignUpWidgetState extends StateMVC<SignUpWidget> {
                       TextFormField(
                         obscureText: _con.hidePassword,
                         onSaved: (input) => _con.user.password = input,
-                        validator: (input) => input.length < 6
+                        validator: (input) => input!.length < 6
                             ? S.of(context).should_be_more_than_6_letters
                             : null,
                         decoration: InputDecoration(
                           labelText: S.of(context).password,
-                          labelStyle:
-                              TextStyle(color: Theme.of(context).accentColor),
+                          labelStyle: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary),
                           contentPadding: EdgeInsets.all(12),
                           hintText: '••••••••••••',
                           hintStyle: TextStyle(
@@ -160,7 +161,7 @@ class _SignUpWidgetState extends StateMVC<SignUpWidget> {
                                   .focusColor
                                   .withOpacity(0.7)),
                           prefixIcon: Icon(Icons.lock_outline,
-                              color: Theme.of(context).accentColor),
+                              color: Theme.of(context).colorScheme.secondary),
                           suffixIcon: IconButton(
                             onPressed: () {
                               setState(() {
@@ -196,35 +197,40 @@ class _SignUpWidgetState extends StateMVC<SignUpWidget> {
                           style:
                               TextStyle(color: Theme.of(context).primaryColor),
                         ),
-                        color: Theme.of(context).accentColor,
+                        color: Theme.of(context).colorScheme.secondary,
                         onPressed: () {
                           _con.register();
                         },
                       ),
                       SizedBox(height: 25),
-                      FlatButton(
+                      TextButton(
                         onPressed: () {
                           Navigator.of(context)
                               .pushReplacementNamed('/Pages', arguments: 2);
                         },
-                        shape: StadiumBorder(),
-                        textColor: Theme.of(context).hintColor,
-                        child: Text(S.of(context).skip),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 30, vertical: 14),
-                      ),
+                        child: Text(
+                          S.of(context).skip,
+                        ),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 14),
+                          shape: const StadiumBorder(),
+                          foregroundColor:
+                              Theme.of(context).hintColor, // replaces textColor
+                        ),
+                      )
 //                      FlatButton(
 //                        onPressed: () {
 //                          Navigator.of(context).pushNamed('/MobileVerification');
 //                        },
 //                        padding: EdgeInsets.symmetric(vertical: 14),
-//                        color: Theme.of(context).accentColor.withOpacity(0.1),
+//                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
 //                        shape: StadiumBorder(),
 //                        child: Text(
 //                          'Register with Google',
 //                          textAlign: TextAlign.start,
 //                          style: TextStyle(
-//                            color: Theme.of(context).accentColor,
+//                            color: Theme.of(context).colorScheme.secondary,
 //                          ),
 //                        ),
 //                      ),
@@ -234,15 +240,17 @@ class _SignUpWidgetState extends StateMVC<SignUpWidget> {
               ),
             ),
             Positioned(
-              bottom: 10,
-              child: FlatButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed('/Login');
-                },
-                textColor: Theme.of(context).hintColor,
-                child: Text(S.of(context).i_have_account_back_to_login),
-              ),
-            )
+                bottom: 10,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/Login');
+                  },
+                  child: Text(S.of(context).i_have_account_back_to_login),
+                  style: TextButton.styleFrom(
+                    foregroundColor:
+                        Theme.of(context).hintColor, // replaces textColor
+                  ),
+                ))
           ],
         ),
       ),

@@ -20,19 +20,19 @@ class MenuWidget extends StatefulWidget {
   _MenuWidgetState createState() => _MenuWidgetState();
   RouteArgument routeArgument;
 
-  MenuWidget({Key key, this.routeArgument}) : super(key: key);
+  MenuWidget({Key? key, required this.routeArgument}) : super(key: key);
 }
 
 class _MenuWidgetState extends StateMVC<MenuWidget> {
-  MarketController _con;
+  late MarketController _con;
 
   _MenuWidgetState() : super(MarketController()) {
-    _con = controller;
+    _con = controller as MarketController;
   }
 
   @override
   void initState() {
-    _con.listenForProducts(widget.routeArgument.id);
+    _con.listenForProducts(widget.routeArgument.id!);
     // _con.listenForTrendingProducts(widget.routeArgument.id);
     _con.listenForCart();
     super.initState();
@@ -48,12 +48,12 @@ class _MenuWidgetState extends StateMVC<MenuWidget> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          _con.products.isNotEmpty ? _con.products[0].market.name : '',
+          _con.products.isNotEmpty ? _con.products[0].market.name! : '',
           overflow: TextOverflow.fade,
           softWrap: false,
           style: Theme.of(context)
               .textTheme
-              .title
+              .titleMedium!
               .merge(TextStyle(letterSpacing: 0)),
         ),
         actions: <Widget>[
@@ -70,9 +70,9 @@ class _MenuWidgetState extends StateMVC<MenuWidget> {
                 )
               : ShoppingCartButtonWidget(
                   iconColor: Theme.of(context).hintColor,
-                  labelColor: Theme.of(context).accentColor),
+                  labelColor: Theme.of(context).colorScheme.secondary),
           // new ShoppingCartButtonWidget(
-          //     iconColor: Theme.of(context).hintColor, labelColor: Theme.of(context).accentColor),
+          //     iconColor: Theme.of(context).hintColor, labelColor: Theme.of(context).colorScheme.secondary),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -96,11 +96,11 @@ class _MenuWidgetState extends StateMVC<MenuWidget> {
             //   ),
             //   title: Text(
             //     S.of(context).trending_this_week,
-            //     style: Theme.of(context).textTheme.display1,
+            //     style: Theme.of(context).textTheme.headlineMedium,
             //   ),
             // subtitle: Text(
             //   S.of(context).double_click_on_the_product_to_add_it_to_the,
-            //   style: Theme.of(context).textTheme.caption.merge(TextStyle(fontSize: 11)),
+            //   style: Theme.of(context).textTheme.bodySmall.merge(TextStyle(fontSize: 11)),
             // ),
             // ),
             // ProductsCarouselWidget(heroTag: 'menu_trending_product', productsList: _con.trendingProducts,controller:_con),
@@ -114,11 +114,11 @@ class _MenuWidgetState extends StateMVC<MenuWidget> {
               ),
               title: Text(
                 S.of(context).all_product,
-                style: Theme.of(context).textTheme.display1,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
               // subtitle: Text(
               //   S.of(context).longpress_on_the_product_to_add_suplements,
-              //   style: Theme.of(context).textTheme.caption.merge(TextStyle(fontSize: 11)),
+              //   style: Theme.of(context).textTheme.bodySmall.merge(TextStyle(fontSize: 11)),
               // ),
             ),
             _con.products.isEmpty
@@ -156,7 +156,7 @@ class _MenuWidgetState extends StateMVC<MenuWidget> {
                                     // return object of type Dialog
                                     return AddToCartAlertDialogWidget(
                                         oldProduct:
-                                            _con.carts.elementAt(0)?.product,
+                                            _con.carts.elementAt(0).product!,
                                         newProduct:
                                             _con.products.elementAt(index),
                                         onPressed: (product, {reset: true}) {

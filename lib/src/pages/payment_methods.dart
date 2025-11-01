@@ -9,16 +9,16 @@ import '../models/route_argument.dart';
 import '../repository/settings_repository.dart';
 
 class PaymentMethodsWidget extends StatefulWidget {
-  RouteArgument routeArgument;
+  RouteArgument? routeArgument;
 
-  PaymentMethodsWidget({Key key, this.routeArgument}) : super(key: key);
+  PaymentMethodsWidget({Key? key, this.routeArgument}) : super(key: key);
 
   @override
   _PaymentMethodsWidgetState createState() => _PaymentMethodsWidgetState();
 }
 
 class _PaymentMethodsWidgetState extends State<PaymentMethodsWidget> {
-  PaymentMethodList list;
+  late PaymentMethodList list;
 
   @override
   void initState() {
@@ -43,11 +43,15 @@ class _PaymentMethodsWidgetState extends State<PaymentMethodsWidget> {
         centerTitle: true,
         title: Text(
           S.of(context).payment_mode,
-          style: Theme.of(context).textTheme.title.merge(TextStyle(letterSpacing: 1.3)),
+          style: Theme.of(context)
+              .textTheme
+              .titleMedium!
+              .merge(TextStyle(letterSpacing: 1.3)),
         ),
         actions: <Widget>[
           new ShoppingCartButtonWidget(
-              iconColor: Theme.of(context).hintColor, labelColor: Theme.of(context).accentColor),
+              iconColor: Theme.of(context).hintColor,
+              labelColor: Theme.of(context).colorScheme.secondary),
         ],
       ),
       body: SingleChildScrollView(
@@ -71,11 +75,11 @@ class _PaymentMethodsWidgetState extends State<PaymentMethodsWidget> {
             //             Icons.payment,
             //             color: Theme.of(context).hintColor,
             //           ),
-            //           title: Text(
+            //           titleMedium: Text(
             //             S.of(context).payment_options,
             //             maxLines: 1,
             //             overflow: TextOverflow.ellipsis,
-            //             style: Theme.of(context).textTheme.display1,
+            //             style: Theme.of(context).textTheme.headlineMedium,
             //           ),
             //           subtitle: Text(S.of(context).select_your_preferred_payment_mode),
             //         ),
@@ -105,19 +109,19 @@ class _PaymentMethodsWidgetState extends State<PaymentMethodsWidget> {
             //             Icons.monetization_on,
             //             color: Theme.of(context).hintColor,
             //           ),
-            //           title: Text(
+            //           titleMedium: Text(
             //             S.of(context).cash_on_delivery,
             //             maxLines: 1,
             //             overflow: TextOverflow.ellipsis,
-            //             style: Theme.of(context).textTheme.display1,
+            //             style: Theme.of(context).textTheme.headlineMedium,
             //           ),
             //           subtitle: Text(S.of(context).select_your_preferred_payment_mode),
             //         ),
             //       )
-                // :
-                 SizedBox(
-                    height: 10,
-                  ),
+            // :
+            SizedBox(
+              height: 10,
+            ),
             ListView.separated(
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
@@ -127,7 +131,8 @@ class _PaymentMethodsWidgetState extends State<PaymentMethodsWidget> {
                 return SizedBox(height: 10);
               },
               itemBuilder: (context, index) {
-                return PaymentMethodListItemWidget(paymentMethod: list.cashList.elementAt(index));
+                return PaymentMethodListItemWidget(
+                    paymentMethod: list.cashList.elementAt(index));
               },
             ),
           ],

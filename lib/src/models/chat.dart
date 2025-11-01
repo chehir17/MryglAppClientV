@@ -31,12 +31,21 @@ class Chat {
     }
   }
 
-  Map toMap() {
-    var map = new Map<String, dynamic>();
-    map["id"] = id;
-    map["text"] = text;
-    map["time"] = time;
-    map["user"] = userId;
-    return map;
+  // Map toMap() {
+  //   var map = new Map<String, dynamic>();
+  //   map["id"] = id;
+  //   map["text"] = text;
+  //   map["time"] = time;
+  //   map["user"] = userId;
+  //   return map;
+  // }
+
+  Map<String, dynamic> toMap() {
+    return {
+      "id": id,
+      "text": text,
+      "time": time,
+      "user": userId,
+    };
   }
 }

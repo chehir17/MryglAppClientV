@@ -106,7 +106,7 @@ class CardWidget extends StatelessWidget {
                           //     S.of(context).pickup,
                           //     style: Theme.of(context)
                           //         .textTheme
-                          //         .caption
+                          //         .bodySmall
                           //         .merge(TextStyle(color: Theme.of(context).primaryColor)),
                           //   ),
                           )
@@ -137,7 +137,7 @@ class CardWidget extends StatelessWidget {
                       //   Helper.skipHtml(market.description),
                       //   overflow: TextOverflow.fade,
                       //   softWrap: false,
-                      //   style: Theme.of(context).textTheme.caption,
+                      //   style: Theme.of(context).textTheme.bodySmall,
                       // ),
                       SizedBox(height: 5),
                       Row(
@@ -158,7 +158,7 @@ class CardWidget extends StatelessWidget {
                 //       //         .pushNamed('/Pages', arguments: new RouteArgument(id: '1', param: market));
                 //       //   },
                 //       //   child: Icon(Icons.directions, color: Theme.of(context).primaryColor),
-                //       //   color: Theme.of(context).accentColor,
+                //       //   color: Theme.of(context).colorScheme.secondary,
                 //       //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                 //       // ),
                 //       market.distance > 0

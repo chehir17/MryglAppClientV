@@ -10,17 +10,17 @@ import '../models/filter.dart';
 class FilterWidget extends StatefulWidget {
   final ValueChanged<Filter> onFilter;
 
-  FilterWidget({Key key, this.onFilter}) : super(key: key);
+  FilterWidget({Key? key, required this.onFilter}) : super(key: key);
 
   @override
   _FilterWidgetState createState() => _FilterWidgetState();
 }
 
 class _FilterWidgetState extends StateMVC<FilterWidget> {
-  FilterController _con;
+  late FilterController _con;
 
   _FilterWidgetState() : super(FilterController()) {
-    _con = controller;
+    _con = controller as FilterController;
   }
 
   @override
@@ -41,7 +41,7 @@ class _FilterWidgetState extends StateMVC<FilterWidget> {
                     },
                     child: Text(
                       S.of(context).clear,
-                      style: Theme.of(context).textTheme.body2,
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                   )
                 ],
@@ -121,7 +121,7 @@ class _FilterWidgetState extends StateMVC<FilterWidget> {
                                 _con.onChangeFieldsFilter(index);
                               },
                               title: Text(
-                                _con.fields.elementAt(index).name,
+                                _con.fields.elementAt(index).name!,
                                 overflow: TextOverflow.fade,
                                 softWrap: false,
                                 maxLines: 1,
@@ -134,15 +134,17 @@ class _FilterWidgetState extends StateMVC<FilterWidget> {
               ),
             ),
             SizedBox(height: 15),
-            FlatButton(
+            ElevatedButton(
               onPressed: () {
                 _con.saveFilter().whenComplete(() {
                   widget.onFilter(_con.filter);
                 });
               },
-              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-              color: Theme.of(context).accentColor,
-              shape: StadiumBorder(),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                shape: StadiumBorder(),
+              ),
               child: Text(
                 S.of(context).apply_filters,
                 textAlign: TextAlign.start,

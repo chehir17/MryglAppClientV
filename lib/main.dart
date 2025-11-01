@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
           localeListResolutionCallback:
               S.delegate.listResolution(fallback: const Locale('en', '')),
 
-          /// THEME FIXED (no more DynamicTheme, no more accentColor)
+          /// THEME FIXED (no more DynamicTheme, no more colorScheme.secondary)
           theme: ThemeData(
             fontFamily: 'ProductSans',
             primaryColor: Colors.white,
@@ -80,9 +80,9 @@ class MyApp extends StatelessWidget {
             ),
             scaffoldBackgroundColor: Colors.white,
             textTheme: const TextTheme(
-              headline6: TextStyle(fontSize: 22.0),
-              bodyText1: TextStyle(fontSize: 14.0),
-              bodyText2: TextStyle(fontSize: 15.0),
+              headlineSmall: TextStyle(fontSize: 22.0),
+              bodyLarge: TextStyle(fontSize: 14.0),
+              bodyMedium: TextStyle(fontSize: 15.0),
             ),
           ),
           darkTheme: ThemeData(
@@ -94,9 +94,9 @@ class MyApp extends StatelessWidget {
               brightness: Brightness.dark,
             ),
             textTheme: const TextTheme(
-              headline6: TextStyle(fontSize: 22.0),
-              bodyText1: TextStyle(fontSize: 14.0),
-              bodyText2: TextStyle(fontSize: 15.0),
+              titleLarge: TextStyle(fontSize: 22.0),
+              bodyLarge: TextStyle(fontSize: 14.0),
+              bodyMedium: TextStyle(fontSize: 15.0),
             ),
           ),
           themeMode: ThemeMode.system,

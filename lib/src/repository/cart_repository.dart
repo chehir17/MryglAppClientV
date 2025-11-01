@@ -13,69 +13,84 @@ import '../repository/user_repository.dart' as userRepo;
 Future<Stream<Cart>> getCart() async {
   User _user = userRepo.currentUser.value;
   if (_user.apiToken == null) {
-    return new Stream.value(null);
+    return Stream.value(Cart()); // ✅ return empty cart instead of null
   }
   final String _apiToken = 'api_token=${_user.apiToken}&';
   final String url =
       '${GlobalConfiguration().getString('api_base_url')}carts?${_apiToken}with=product;product.market;options&search=user_id:${_user.id}&searchFields=user_id:=';
 
-  final client = new http.Client();
+  final client = http.Client();
   final streamedRest = await client.send(http.Request('get', Uri.parse(url)));
   print(url);
+
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
-      .map((data) {
-    return Cart.fromJSON(data);
-  });
+      .map((data) =>
+          Cart.fromJSON(Map<String, dynamic>.from(data))); // ✅ safe cast
 }
+
 Future<Stream<Coupon>> getCoupon(code) async {
   String encCode = Uri.encodeComponent(code);
-  final String url = '${GlobalConfiguration().getString('api_base_url')}coupons/$encCode';
-  final client = new http.Client();
+  final String url =
+      '${GlobalConfiguration().getString('api_base_url')}coupons/$encCode';
+
+  final client = http.Client();
   print(url);
   final streamedRest = await client.send(http.Request('get', Uri.parse(url)));
-  return streamedRest.stream.bytesToString().asStream().map((event) => Coupon.fromJSON(json.decode(event)));
+
+  return streamedRest.stream.bytesToString().asStream().map((event) =>
+      Coupon.fromJSON(Map<String, dynamic>.from(json.decode(event))));
 }
+
 Future<Stream<int>> getCartCount() async {
   User _user = userRepo.currentUser.value;
   if (_user.apiToken == null) {
-    return new Stream.value(0);
+    return Stream.value(0);
   }
   final String _apiToken = 'api_token=${_user.apiToken}&';
   final String url =
       '${GlobalConfiguration().getString('api_base_url')}carts/count?${_apiToken}search=user_id:${_user.id}&searchFields=user_id:=';
 
-  final client = new http.Client();
+  final client = http.Client();
   final streamedRest = await client.send(http.Request('get', Uri.parse(url)));
 
-  return streamedRest.stream.transform(utf8.decoder).transform(json.decoder).map(
-    (data) => Helper.getIntData(data),
-  );
+  return streamedRest.stream
+      .transform(utf8.decoder)
+      .transform(json.decoder)
+      .map((data) => Helper.getIntData(data as Map<String, dynamic>));
 }
 
 Future<Cart> addCart(Cart cart, bool reset) async {
   User _user = userRepo.currentUser.value;
   if (_user.apiToken == null) {
-    return new Cart();
+    return Cart();
   }
   Map<String, dynamic> decodedJSON = {};
   final String _apiToken = 'api_token=${_user.apiToken}';
   final String _resetParam = 'reset=${reset ? 1 : 0}';
   cart.userId = _user.id;
-  final String url = '${GlobalConfiguration().getString('api_base_url')}carts?$_apiToken&$_resetParam';
-  final client = new http.Client();
+
+  final String url =
+      '${GlobalConfiguration().getString('api_base_url')}carts?$_apiToken&$_resetParam';
+
+  final client = http.Client();
   final response = await client.post(
-    url,
+    Uri.parse(url), // ✅ fixed
     headers: {HttpHeaders.contentTypeHeader: 'application/json'},
     body: json.encode(cart.toMap()),
   );
+
   try {
-    decodedJSON = json.decode(response.body)['data'] as Map<String, dynamic>;
+    final decodedBody = json.decode(response.body);
+    if (decodedBody != null && decodedBody['data'] != null) {
+      decodedJSON =
+          Map<String, dynamic>.from(decodedBody['data']); // ✅ safe cast
+    }
   } on FormatException catch (e) {
-    print(e);
+    print("JSON decode error: $e");
   }
   return Cart.fromJSON(decodedJSON);
 }
@@ -83,18 +98,25 @@ Future<Cart> addCart(Cart cart, bool reset) async {
 Future<Cart> updateCart(Cart cart) async {
   User _user = userRepo.currentUser.value;
   if (_user.apiToken == null) {
-    return new Cart();
+    return Cart();
   }
   final String _apiToken = 'api_token=${_user.apiToken}';
   cart.userId = _user.id;
-  final String url = '${GlobalConfiguration().getString('api_base_url')}carts/${cart.id}?$_apiToken';
-  final client = new http.Client();
+
+  final String url =
+      '${GlobalConfiguration().getString('api_base_url')}carts/${cart.id}?$_apiToken';
+
+  final client = http.Client();
   final response = await client.put(
-    url,
+    Uri.parse(url), // ✅ fixed
     headers: {HttpHeaders.contentTypeHeader: 'application/json'},
     body: json.encode(cart.toMap()),
   );
-  return Cart.fromJSON(json.decode(response.body)['data']);
+
+  final decodedBody = json.decode(response.body);
+  return Cart.fromJSON(
+    Map<String, dynamic>.from(decodedBody['data']), // ✅ safe cast
+  );
 }
 
 Future<bool> removeCart(Cart cart) async {
@@ -103,11 +125,14 @@ Future<bool> removeCart(Cart cart) async {
     return false;
   }
   final String _apiToken = 'api_token=${_user.apiToken}';
-  final String url = '${GlobalConfiguration().getString('api_base_url')}carts/${cart.id}?$_apiToken';
-  final client = new http.Client();
+  final String url =
+      '${GlobalConfiguration().getString('api_base_url')}carts/${cart.id}?$_apiToken';
+
+  final client = http.Client();
   final response = await client.delete(
-    url,
+    Uri.parse(url), // ✅ fixed
     headers: {HttpHeaders.contentTypeHeader: 'application/json'},
   );
+
   return Helper.getBoolData(json.decode(response.body));
 }

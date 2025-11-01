@@ -3,6 +3,7 @@ import 'package:markets/src/models/user.dart';
 // import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:sign_button/sign_button.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../generated/i18n.dart';
 import '../controllers/user_controller.dart';
@@ -17,62 +18,127 @@ class LoginWidget extends StatefulWidget {
 }
 
 class _LoginWidgetState extends StateMVC<LoginWidget> {
-  UserController _con;
-  GoogleSignIn _googleSignIn;
-  GoogleSignInAccount _currentUser;
+  late UserController _con;
+  late GoogleSignIn _googleSignIn;
+  late GoogleSignInAccount? _currentUser;
   bool _signin = false;
 
   _LoginWidgetState() : super(UserController()) {
-    _con = controller;
+    _con = controller as UserController;
   }
 
-  Future<void> _handleSignIn() async {
-    try {
-      _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
-        // setState(() {
-        _currentUser = account;
-        // _handleSignOut();
-        // print(_currentUser.displayName);
-        if (_currentUser.email != null) {
-          print(_currentUser.displayName);
-          _con.loginwithGg(_currentUser);
-        }
-        // });
-      });
-      _googleSignIn.signInSilently();
-      // _handleSignOut();
-      await _googleSignIn.isSignedIn().then((value) => _signin = value);
+  // Future<void> _handleSignIn() async {
+  //   try {
+  //     _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
+  //       // setState(() {
+  //       _currentUser = account;
+  //       // _handleSignOut();
+  //       // print(_currentUser.displayName);
+  //       if (_currentUser.email != null) {
+  //         print(_currentUser.displayName);
+  //         _con.loginwithGg(_currentUser);
+  //       }
+  //       // });
+  //     });
+  //     _googleSignIn.signInSilently();
+  //     // _handleSignOut();
+  //     await _googleSignIn.isSignedIn().then((value) => _signin = value);
 
-      if (_signin) {
-        print(_currentUser.displayName);
-        _con.loginwithGg(_currentUser);
-      } else
-        await _googleSignIn.signIn().whenComplete(() {
-          print(_currentUser.displayName);
-          _con.loginwithGg(_currentUser);
-        });
+  //     if (_signin) {
+  //       print(_currentUser.displayName);
+  //       _con.loginwithGg(_currentUser);
+  //     } else
+  //       await _googleSignIn.signIn().whenComplete(() {
+  //         print(_currentUser.displayName);
+  //         _con.loginwithGg(_currentUser);
+  //       });
 
-      // print(_currentUser.displayName);
-    } catch (error) {
-      print(error);
-      // _handleSignIn();
-    }
-  }
+  //     // print(_currentUser.displayName);
+  //   } catch (error) {
+  //     print(error);
+  //     // _handleSignIn();
+  //   }
+  // }
 
-  Future<void> _handleSignOut() async {
-    await _googleSignIn.isSignedIn().then((value) => _signin = value);
-  }
+  // Future<void> _handleSignOut() async {
+  //   await _googleSignIn.isSignedIn().then((value) => _signin = value);
+  // }
 
   @override
   void initState() {
-    _googleSignIn = GoogleSignIn();
-    // _handleSignOut();
     super.initState();
-    if (userRepo.currentUser.value.apiToken != null) {
-      Navigator.of(context).pushReplacementNamed('/Pages', arguments: 2);
-    }
-    // if(_signin) _googleSignIn.disconnect();
+
+    // Initialize GoogleSignIn instance
+    // _googleSignIn = GoogleSignIn();
+
+    // Initialize GoogleSignIn with scopes
+    _initializeGoogleSignIn();
   }
+
+  Future<void> _initializeGoogleSignIn() async {
+    try {
+      // Initialize with scopes
+      await _googleSignIn.initialize();
+
+      // Listen to authentication events
+      _googleSignIn.authenticationEvents.listen((event) {
+        if (event is GoogleSignInAuthenticationEventSignIn) {
+          setState(() {
+            _currentUser = event.user;
+          });
+          _con.loginwithGg(_currentUser!);
+        } else if (event is GoogleSignInAuthenticationEventSignOut) {
+          setState(() {
+            _currentUser = null;
+          });
+        }
+      });
+
+      // Optional: attempt lightweight sign-in
+      _googleSignIn.attemptLightweightAuthentication()!.catchError((e) {
+        print("Lightweight auth failed: $e");
+      });
+    } catch (e) {
+      print("Google Sign-In initialization failed: $e");
+    }
+  }
+
+// Trigger Google Sign-In
+  Future<void> _handleSignIn() async {
+    try {
+      await _googleSignIn.initialize();
+      final GoogleSignInAccount? user = await _googleSignIn.authenticate();
+      if (user != null) {
+        // Handle successful sign-in
+        print('Signed in as ${user.displayName}');
+      }
+    } catch (error) {
+      print('Sign-in failed: $error');
+    }
+  }
+
+// Sign out user
+  Future<void> _handleSignOut() async {
+    try {
+      await _googleSignIn.disconnect();
+      setState(() {
+        _currentUser = null;
+      });
+    } catch (error) {
+      print("Sign-out error: $error");
+    }
+  }
+
+  // @override
+  // void initState() {
+  //   _googleSignIn = GoogleSignIn();
+  //   // _handleSignOut();
+  //   super.initState();
+  //   if (userRepo.currentUser.value.apiToken != null) {
+  //     Navigator.of(context).pushReplacementNamed('/Pages', arguments: 2);
+  //   }
+  //   // if(_signin) _googleSignIn.disconnect();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +153,8 @@ class _LoginWidgetState extends StateMVC<LoginWidget> {
             child: Container(
               width: config.App(context).appWidth(100),
               height: config.App(context).appHeight(37),
-              decoration: BoxDecoration(color: Theme.of(context).accentColor),
+              decoration:
+                  BoxDecoration(color: Theme.of(context).colorScheme.secondary),
             ),
           ),
           Positioned(
@@ -99,7 +166,7 @@ class _LoginWidgetState extends StateMVC<LoginWidget> {
                 S.of(context).lets_start_with_login,
                 style: Theme.of(context)
                     .textTheme
-                    .display3
+                    .displayMedium!
                     .merge(TextStyle(color: Theme.of(context).primaryColor)),
               ),
             ),
@@ -135,15 +202,15 @@ class _LoginWidgetState extends StateMVC<LoginWidget> {
                       //validator: (input) => !input.contains('@') ? S.of(context).should_be_a_valid_email : null,
                       decoration: InputDecoration(
                         labelText: S.of(context).phone,
-                        labelStyle:
-                            TextStyle(color: Theme.of(context).accentColor),
+                        labelStyle: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary),
                         contentPadding: EdgeInsets.all(12),
                         hintText: 'XXX-XXX-XXX',
                         hintStyle: TextStyle(
                             color:
                                 Theme.of(context).focusColor.withOpacity(0.7)),
                         prefixIcon: Icon(Icons.phone_android,
-                            color: Theme.of(context).accentColor),
+                            color: Theme.of(context).colorScheme.secondary),
                         border: OutlineInputBorder(
                             borderSide: BorderSide(
                                 color: Theme.of(context)
@@ -165,21 +232,21 @@ class _LoginWidgetState extends StateMVC<LoginWidget> {
                     TextFormField(
                       keyboardType: TextInputType.text,
                       onSaved: (input) => _con.user.password = input,
-                      validator: (input) => input.length < 3
+                      validator: (input) => input!.length < 3
                           ? S.of(context).should_be_more_than_3_characters
                           : null,
                       obscureText: _con.hidePassword,
                       decoration: InputDecoration(
                         labelText: S.of(context).password,
-                        labelStyle:
-                            TextStyle(color: Theme.of(context).accentColor),
+                        labelStyle: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary),
                         contentPadding: EdgeInsets.all(12),
                         hintText: '••••••••••••',
                         hintStyle: TextStyle(
                             color:
                                 Theme.of(context).focusColor.withOpacity(0.7)),
                         prefixIcon: Icon(Icons.lock_outline,
-                            color: Theme.of(context).accentColor),
+                            color: Theme.of(context).colorScheme.secondary),
                         suffixIcon: IconButton(
                           onPressed: () {
                             setState(() {
@@ -214,7 +281,7 @@ class _LoginWidgetState extends StateMVC<LoginWidget> {
                         S.of(context).login,
                         style: TextStyle(color: Theme.of(context).primaryColor),
                       ),
-                      color: Theme.of(context).accentColor,
+                      color: Theme.of(context).colorScheme.secondary,
                       onPressed: () {
                         _con.login();
                       },
@@ -241,16 +308,19 @@ class _LoginWidgetState extends StateMVC<LoginWidget> {
                     ),
                     // SizedBox(height: 15),
                     SizedBox(height: 15),
-                    FlatButton(
+                    ElevatedButton(
                       onPressed: () {
                         Navigator.of(context)
                             .pushReplacementNamed('/Pages', arguments: 2);
                       },
-                      shape: StadiumBorder(),
-                      textColor: Theme.of(context).hintColor,
+                      style: ElevatedButton.styleFrom(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 14),
+                        shape: StadiumBorder(),
+                        textStyle:
+                            TextStyle(color: Theme.of(context).hintColor),
+                      ),
                       child: Text(S.of(context).skip),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 30, vertical: 14),
                     ),
 //                      SizedBox(height: 10),
                   ],
@@ -270,12 +340,14 @@ class _LoginWidgetState extends StateMVC<LoginWidget> {
                 //   textColor: Theme.of(context).hintColor,
                 //   child: Text(S.of(context).i_forgot_password),
                 // ),
-                FlatButton(
+                ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pushNamed('/SignUp');
                     // Navigator.of(context).pushReplacementNamed('/SignUp');
                   },
-                  textColor: Theme.of(context).hintColor,
+                  style: ElevatedButton.styleFrom(
+                    textStyle: TextStyle(color: Theme.of(context).hintColor),
+                  ),
                   child: Text(S.of(context).i_dont_have_an_account),
                 ),
               ],

@@ -137,7 +137,7 @@ class ProductController extends ControllerMVC {
         }).whenComplete(() {
           listenForCart();
           Flushbar(
-            // title:  "Ooops !!",
+            // titleMedium:  "Ooops !!",
             message: S.current.this_product_was_added_to_cart,
             duration: Duration(seconds: 1),
             flushbarPosition: FlushbarPosition.TOP,
@@ -200,7 +200,7 @@ class ProductController extends ControllerMVC {
         this.favorite = value;
       });
       Flushbar(
-        // title:  "Ooops !!",
+        // titleMedium:  "Ooops !!",
         message: S.current.this_product_was_added_to_favorite,
         duration: Duration(seconds: 1),
         flushbarPosition: FlushbarPosition.TOP,

@@ -13,10 +13,10 @@ import '../models/conversation.dart';
 import '../models/route_argument.dart';
 
 class ChatWidget extends StatefulWidget {
-  final RouteArgument routeArgument;
-  final GlobalKey<ScaffoldState> parentScaffoldKey;
+  final RouteArgument? routeArgument;
+  final GlobalKey<ScaffoldState>? parentScaffoldKey;
 
-  ChatWidget({Key key, this.parentScaffoldKey, this.routeArgument})
+  ChatWidget({Key? key, this.parentScaffoldKey, this.routeArgument})
       : super(key: key);
 
   @override
@@ -27,17 +27,17 @@ class _ChatWidgetState extends StateMVC<ChatWidget> {
   final _myListKey = GlobalKey<AnimatedListState>();
   final myController = TextEditingController();
 
-  ChatController _con;
+  late ChatController _con;
 
   _ChatWidgetState() : super(ChatController()) {
-    _con = controller;
+    _con = controller as ChatController;
   }
 
   @override
   void initState() {
-    _con.conversation = widget.routeArgument.param as Conversation;
-    if (_con.conversation.id != null) {
-      _con.listenForChats(_con.conversation);
+    _con.conversation = widget.routeArgument!.param as Conversation;
+    if (_con.conversation!.id != null) {
+      _con.listenForChats(_con.conversation!);
     }
     super.initState();
   }
@@ -58,20 +58,25 @@ class _ChatWidgetState extends StateMVC<ChatWidget> {
                 key: _myListKey,
                 reverse: true,
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                itemCount: snapshot.data.documents.length,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                itemCount: snapshot.data!.docs.length,
                 shrinkWrap: false,
                 primary: true,
                 itemBuilder: (context, index) {
-                  print(snapshot.data.documents[index].data());
-                  Chat _chat =
-                      Chat.fromJSON(snapshot.data.documents[index].data());
-                  _chat.user = _con.conversation.users
+                  final rawData =
+                      snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                  print(rawData);
+
+                  Chat _chat = Chat.fromJSON(rawData);
+                  _chat.user = _con.conversation!.users
                       .firstWhere((_user) => _user.id == _chat.userId);
+
                   return ChatMessageListItem(
                     chat: _chat,
                   );
-                })
+                },
+              )
             : EmptyMessagesWidget();
       },
     );
@@ -89,31 +94,31 @@ class _ChatWidgetState extends StateMVC<ChatWidget> {
             icon:
                 new Icon(Icons.arrow_back, color: Theme.of(context).hintColor),
             onPressed: () {
-              if (widget.routeArgument.id == null) {
+              if (widget.routeArgument!.id == null) {
                 // from conversation page
                 Navigator.of(context).pushNamed('/Pages', arguments: 4);
               } else {
                 Navigator.of(context).pushNamed('/Details',
                     arguments: RouteArgument(
                         id: '0',
-                        param: widget.routeArgument.id,
+                        param: widget.routeArgument!.id,
                         heroTag: 'chat_tab'));
               }
             }),
         automaticallyImplyLeading: false,
         title: Text(
-          _con.conversation.name,
+          _con.conversation!.name!,
           overflow: TextOverflow.fade,
           maxLines: 1,
           style: Theme.of(context)
               .textTheme
-              .headline6
+              .titleLarge!
               .merge(TextStyle(letterSpacing: 1.3)),
         ),
         actions: <Widget>[
           new ShoppingCartButtonWidget(
               iconColor: Theme.of(context).hintColor,
-              labelColor: Theme.of(context).accentColor),
+              labelColor: Theme.of(context).colorScheme.secondary),
         ],
       ),
       body: Column(
@@ -142,14 +147,14 @@ class _ChatWidgetState extends StateMVC<ChatWidget> {
                 suffixIcon: IconButton(
                   padding: EdgeInsets.only(right: 30),
                   onPressed: () {
-                    _con.addMessage(_con.conversation, myController.text);
+                    _con.addMessage(_con.conversation!, myController.text);
                     Timer(Duration(milliseconds: 100), () {
                       myController.clear();
                     });
                   },
                   icon: Icon(
                     Icons.send,
-                    color: Theme.of(context).accentColor,
+                    color: Theme.of(context).colorScheme.secondary,
                     size: 30,
                   ),
                 ),

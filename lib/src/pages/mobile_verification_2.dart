@@ -21,13 +21,13 @@ class MobileVerification2 extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Verify Your Account',
-                    style: Theme.of(context).textTheme.headline,
+                    style: Theme.of(context).textTheme.headlineMedium,
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 10),
                   Text(
                     'We are sending OTP to validate your mobile number. Hang on!',
-                    style: Theme.of(context).textTheme.body1,
+                    style: Theme.of(context).textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -35,11 +35,12 @@ class MobileVerification2 extends StatelessWidget {
             ),
             SizedBox(height: 50),
             TextField(
-              style: Theme.of(context).textTheme.headline,
+              style: Theme.of(context).textTheme.headlineMedium,
               textAlign: TextAlign.center,
               decoration: new InputDecoration(
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.2)),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).focusColor.withOpacity(0.2)),
                 ),
                 focusedBorder: new UnderlineInputBorder(
                   borderSide: new BorderSide(
@@ -52,17 +53,21 @@ class MobileVerification2 extends StatelessWidget {
             SizedBox(height: 15),
             Text(
               'SMS has been sent to +155 4585 555',
-              style: Theme.of(context).textTheme.caption,
+              style: Theme.of(context).textTheme.bodySmall,
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 80),
             new BlockButtonWidget(
               onPressed: () {
-                Navigator.of(context).pushReplacementNamed('/Pages', arguments: 2);
+                Navigator.of(context)
+                    .pushReplacementNamed('/Pages', arguments: 2);
               },
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).colorScheme.secondary,
               text: Text(S.of(context).verify.toUpperCase(),
-                  style: Theme.of(context).textTheme.title.merge(TextStyle(color: Theme.of(context).primaryColor))),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .merge(TextStyle(color: Theme.of(context).primaryColor))),
             ),
           ],
         ),

@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
+// import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:markets/src/helpers/global.dart';
 import 'package:markets/src/models/conversation.dart';
@@ -18,10 +18,10 @@ class DrawerWidget extends StatefulWidget {
 }
 
 class _DrawerWidgetState extends StateMVC<DrawerWidget> {
-  ProfileController _con;
+  late ProfileController _con;
 
   _DrawerWidgetState() : super(ProfileController()) {
-    _con = controller;
+    _con = controller as ProfileController;
   }
 
   @override
@@ -41,17 +41,17 @@ class _DrawerWidgetState extends StateMVC<DrawerWidget> {
                       color: Theme.of(context).hintColor.withOpacity(0.1),
                     ),
                     accountName: Text(
-                      currentUser.value.name,
-                      style: Theme.of(context).textTheme.title,
+                      currentUser.value.name!,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                     accountEmail: Text(
-                      currentUser.value.phone,
-                      style: Theme.of(context).textTheme.caption,
+                      currentUser.value.phone!,
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                     currentAccountPicture: CircleAvatar(
-                      backgroundColor: Theme.of(context).accentColor,
-                      backgroundImage:
-                          CachedNetworkImageProvider(currentUser.value.image.thumb),
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      backgroundImage: CachedNetworkImageProvider(
+                          currentUser.value.image!.thumb!),
                     ),
                   )
                 : Container(
@@ -64,12 +64,15 @@ class _DrawerWidgetState extends StateMVC<DrawerWidget> {
                         Icon(
                           Icons.person,
                           size: 32,
-                          color: Theme.of(context).accentColor.withOpacity(1),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(1),
                         ),
                         SizedBox(width: 30),
                         Text(
                           S.of(context).guest,
-                          style: Theme.of(context).textTheme.title,
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ],
                     ),
@@ -93,7 +96,7 @@ class _DrawerWidgetState extends StateMVC<DrawerWidget> {
           //   ),
           //   title: Text(
           //     S.of(context).chat,
-          //     style: Theme.of(context).textTheme.subhead,
+          //     style: Theme.of(context).textTheme.titleSmall,
           //   ),
           // ),
           ListTile(
@@ -106,7 +109,7 @@ class _DrawerWidgetState extends StateMVC<DrawerWidget> {
             ),
             title: Text(
               S.of(context).home,
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
           ListTile(
@@ -119,7 +122,7 @@ class _DrawerWidgetState extends StateMVC<DrawerWidget> {
             ),
             title: Text(
               S.of(context).notifications,
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
           ListTile(
@@ -132,7 +135,7 @@ class _DrawerWidgetState extends StateMVC<DrawerWidget> {
             ),
             title: Text(
               S.of(context).my_orders,
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
           ListTile(
@@ -145,14 +148,14 @@ class _DrawerWidgetState extends StateMVC<DrawerWidget> {
             ),
             title: Text(
               S.of(context).favorite_products,
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
           ListTile(
             dense: true,
             title: Text(
               S.of(context).application_preferences,
-              style: Theme.of(context).textTheme.body1,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
             trailing: Icon(
               Icons.remove,
@@ -169,7 +172,7 @@ class _DrawerWidgetState extends StateMVC<DrawerWidget> {
             ),
             title: Text(
               S.of(context).rate_app,
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
           ListTile(
@@ -182,7 +185,7 @@ class _DrawerWidgetState extends StateMVC<DrawerWidget> {
             ),
             title: Text(
               S.of(context).help__support,
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
           ListTile(
@@ -199,7 +202,7 @@ class _DrawerWidgetState extends StateMVC<DrawerWidget> {
             ),
             title: Text(
               S.of(context).settings,
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
           ListTile(
@@ -212,18 +215,38 @@ class _DrawerWidgetState extends StateMVC<DrawerWidget> {
             ),
             title: Text(
               S.of(context).languages,
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
+          // ListTile(
+          //   onTap: () {
+          //     if (Theme.of(context).brightness == Brightness.dark) {
+          //       setBrightness(Brightness.light);
+          //       DynamicTheme.of(context).setBrightness(Brightness.light);
+          //     } else {
+          //       setBrightness(Brightness.dark);
+          //       DynamicTheme.of(context).setBrightness(Brightness.dark);
+          //     }
+          //   },
+          //   leading: Icon(
+          //     Icons.brightness_6,
+          //     color: Theme.of(context).focusColor.withOpacity(1),
+          //   ),
+          //   title: Text(
+          //     Theme.of(context).brightness == Brightness.dark
+          //         ? S.of(context).light_mode
+          //         : S.of(context).dark_mode,
+          //     style: Theme.of(context).textTheme.titleSmall,
+          //   ),
+          // ),
           ListTile(
             onTap: () {
-              if (Theme.of(context).brightness == Brightness.dark) {
-                setBrightness(Brightness.light);
-                DynamicTheme.of(context).setBrightness(Brightness.light);
-              } else {
-                setBrightness(Brightness.dark);
-                DynamicTheme.of(context).setBrightness(Brightness.dark);
-              }
+              // Just show a message that theme toggle is not supported
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Theme toggle not supported in current setup.'),
+                ),
+              );
             },
             leading: Icon(
               Icons.brightness_6,
@@ -233,7 +256,7 @@ class _DrawerWidgetState extends StateMVC<DrawerWidget> {
               Theme.of(context).brightness == Brightness.dark
                   ? S.of(context).light_mode
                   : S.of(context).dark_mode,
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
           ListTile(
@@ -256,15 +279,15 @@ class _DrawerWidgetState extends StateMVC<DrawerWidget> {
               currentUser.value.apiToken != null
                   ? S.of(context).log_out
                   : S.of(context).login,
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
           setting.value.enableVersion
               ? ListTile(
                   dense: true,
                   title: Text(
-                    S.of(context).version + " " + setting.value.appVersion,
-                    style: Theme.of(context).textTheme.body1,
+                    S.of(context).version + " " + setting.value.appVersion!,
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   trailing: Icon(
                     Icons.remove,

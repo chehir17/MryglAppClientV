@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:location_permissions/location_permissions.dart';
 import 'package:markets/src/pages/pages.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 
@@ -13,10 +12,10 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashScreenState extends StateMVC<SplashScreen> {
-  SplashScreenController _con;
+  late SplashScreenController _con;
 
   SplashScreenState() : super(SplashScreenController()) {
-    _con = controller;
+    _con = controller as SplashScreenController;
   }
 
   @override
@@ -35,14 +34,14 @@ class SplashScreenState extends StateMVC<SplashScreen> {
         });
         if (progress == 100) {
           try {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => PagesWidget()));
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => PagesWidget()));
           } catch (e) {}
         }
       });
     } catch (e) {
       // loadData();
     }
-    
   }
 
   @override
@@ -54,19 +53,19 @@ class SplashScreenState extends StateMVC<SplashScreen> {
           color: Theme.of(context).scaffoldBackgroundColor,
         ),
         child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-              image: DecorationImage(
-                image: AssetImage("assets/img/backimg.png"),
-                fit: BoxFit.cover,
-              ),
-        ),
-        child: Center(
-          // child: //Column(
-            // mainAxisSize: MainAxisSize.max,
-            // crossAxisAlignment: CrossAxisAlignment.center,
-            // mainAxisAlignment: MainAxisAlignment.center,
-            // children: <Widget>[
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            image: DecorationImage(
+              image: AssetImage("assets/img/backimg.png"),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Center(
+              // child: //Column(
+              // mainAxisSize: MainAxisSize.max,
+              // crossAxisAlignment: CrossAxisAlignment.center,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              // children: <Widget>[
               // Image.asset(
               //   'assets/img/logo.png',
               //   width: 150,
@@ -76,10 +75,10 @@ class SplashScreenState extends StateMVC<SplashScreen> {
               // CircularProgressIndicator(
               //   valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).hintColor),
               // ),
-          //   ],
-          // ),
+              //   ],
+              // ),
+              ),
         ),
-      ),
         // child: Center(
         //   child: Column(
         //     mainAxisSize: MainAxisSize.max,

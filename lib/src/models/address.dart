@@ -13,7 +13,8 @@ class Address {
 
   Address(this.id, this.description, this.address, this.latitude,
       this.longitude, this.isDefault, this.userId)
-      : title = address!.split(','); // title is the first part of the address
+      : title = address!.split(',');
+  Address.empty();
 
   Address.fromJSON(Map<String, dynamic> jsonMap) {
     try {
@@ -41,8 +42,6 @@ class Address {
       print(e);
     }
   }
-
-  Address.empty();
 
   Map toMap() {
     var map = new Map<String, dynamic>();

@@ -142,7 +142,7 @@ class MapController extends ControllerMVC {
               visible: true,
               polylineId: new PolylineId(currentAddress.hashCode.toString()),
               points: _latLng,
-              color: config.Colors().mainColor(0.8),
+              color: Colors.blue.withOpacity(0.8),
               width: 6));
         });
       }

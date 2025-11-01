@@ -7,7 +7,8 @@ import '../models/notification.dart' as model;
 class NotificationItemWidget extends StatelessWidget {
   model.Notification notification;
 
-  NotificationItemWidget({Key key, this.notification}) : super(key: key);
+  NotificationItemWidget({Key? key, required this.notification})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +22,13 @@ class NotificationItemWidget extends StatelessWidget {
               height: 75,
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: LinearGradient(begin: Alignment.bottomLeft, end: Alignment.topRight, colors: [
-                    Theme.of(context).focusColor.withOpacity(0.7),
-                    Theme.of(context).focusColor.withOpacity(0.05),
-                  ])),
+                  gradient: LinearGradient(
+                      begin: Alignment.bottomLeft,
+                      end: Alignment.topRight,
+                      colors: [
+                        Theme.of(context).focusColor.withOpacity(0.7),
+                        Theme.of(context).focusColor.withOpacity(0.05),
+                      ])),
               child: Icon(
                 Icons.notifications,
                 color: Theme.of(context).scaffoldBackgroundColor,
@@ -38,7 +42,9 @@ class NotificationItemWidget extends StatelessWidget {
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.15),
+                  color: Theme.of(context)
+                      .scaffoldBackgroundColor
+                      .withOpacity(0.15),
                   borderRadius: BorderRadius.circular(150),
                 ),
               ),
@@ -50,7 +56,9 @@ class NotificationItemWidget extends StatelessWidget {
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.15),
+                  color: Theme.of(context)
+                      .scaffoldBackgroundColor
+                      .withOpacity(0.15),
                   borderRadius: BorderRadius.circular(150),
                 ),
               ),
@@ -67,11 +75,11 @@ class NotificationItemWidget extends StatelessWidget {
                 Helper.trans(notification.type),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
-                style: Theme.of(context).textTheme.body2,
+                style: Theme.of(context).textTheme.bodySmall,
               ),
               Text(
                 DateFormat('yyyy-MM-dd - HH:mm').format(notification.createdAt),
-                style: Theme.of(context).textTheme.caption,
+                style: Theme.of(context).textTheme.bodySmall,
               )
             ],
           ),

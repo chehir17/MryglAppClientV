@@ -40,7 +40,7 @@ Future<Stream<Product>> getTrendingProducts() async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Product.fromJSON(data);
@@ -57,7 +57,7 @@ Future<Stream<Product>> getProduct(String productId) async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .map((data) {
     return Product.fromJSON(data);
   });
@@ -79,7 +79,7 @@ Future<Stream<Product>> searchProducts(String search, Address address) async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Product.fromJSON(data);
@@ -114,7 +114,7 @@ Future<Stream<Product>> getProductsByCategory(categoryId) async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getDataWithPaginate(data))
+      .map((data) => Helper.getDataWithPaginate(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Product.fromJSON(data);
@@ -122,7 +122,7 @@ Future<Stream<Product>> getProductsByCategory(categoryId) async {
 }
 
 Future<Stream<Product>> getProductsByMarketCategory(categoryId, marketId,
-    {Category category}) async {
+    {Category? category}) async {
   Uri uri = Helper.getUri('api/products');
   Map<String, dynamic> _queryParams = {};
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -151,7 +151,7 @@ Future<Stream<Product>> getProductsByMarketCategory(categoryId, marketId,
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getDataWithPaginate(data))
+      .map((data) => Helper.getDataWithPaginate(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Product.fromJSON(data);
@@ -159,7 +159,7 @@ Future<Stream<Product>> getProductsByMarketCategory(categoryId, marketId,
 }
 
 Future<Stream<Product>> getProductsByMarketSubCategory(
-    {subcategoryId, marketId, Category category}) async {
+    {subcategoryId, marketId, Category? category}) async {
   Uri uri = Helper.getUri('api/products');
   Map<String, dynamic> _queryParams = {};
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -185,7 +185,7 @@ Future<Stream<Product>> getProductsByMarketSubCategory(
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getDataWithPaginate(data))
+      .map((data) => Helper.getDataWithPaginate(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Product.fromJSON(data);
@@ -193,7 +193,7 @@ Future<Stream<Product>> getProductsByMarketSubCategory(
 }
 
 Future<Stream<Product>> getProductsByMarketSubCategoryPaginate(
-    {subcategoryId, marketId, Category category, page}) async {
+    {subcategoryId, marketId, Category? category, page}) async {
   Uri uri = Helper.getUri('api/products');
   Map<String, dynamic> _queryParams = {};
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -220,7 +220,7 @@ Future<Stream<Product>> getProductsByMarketSubCategoryPaginate(
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getDataWithPaginate(data))
+      .map((data) => Helper.getDataWithPaginate(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Product.fromJSON(data);
@@ -255,7 +255,7 @@ Future<Stream<Product>> getProductsByPaginate(page, categoryId) async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getDataWithPaginate(data))
+      .map((data) => Helper.getDataWithPaginate(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Product.fromJSON(data);
@@ -264,7 +264,7 @@ Future<Stream<Product>> getProductsByPaginate(page, categoryId) async {
 
 Future<Stream<Product>> getSubCatProductsByMarketPaginate(
     page, categoryId, marketId,
-    {Category category}) async {
+    {Category? category}) async {
   Uri uri = Helper.getUri('api/products');
   Map<String, dynamic> _queryParams = {};
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -291,7 +291,7 @@ Future<Stream<Product>> getSubCatProductsByMarketPaginate(
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getDataWithPaginate(data))
+      .map((data) => Helper.getDataWithPaginate(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Product.fromJSON(data);
@@ -299,7 +299,7 @@ Future<Stream<Product>> getSubCatProductsByMarketPaginate(
 }
 
 Future<Stream<Product>> getProductsByMarketPaginate(page, categoryId, marketId,
-    {Category category}) async {
+    {Category? category}) async {
   Uri uri = Helper.getUri('api/products');
   Map<String, dynamic> _queryParams = {};
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -327,7 +327,7 @@ Future<Stream<Product>> getProductsByMarketPaginate(page, categoryId, marketId,
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getDataWithPaginate(data))
+      .map((data) => Helper.getDataWithPaginate(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Product.fromJSON(data);
@@ -337,7 +337,7 @@ Future<Stream<Product>> getProductsByMarketPaginate(page, categoryId, marketId,
 Future<Stream<Favorite>> isFavoriteProduct(String productId) async {
   User _user = userRepo.currentUser.value;
   if (_user.apiToken == null) {
-    return Stream.value(null);
+    return Stream.value(Favorite());
   }
   final String _apiToken = 'api_token=${_user.apiToken}&';
   final String url =
@@ -349,14 +349,14 @@ Future<Stream<Favorite>> isFavoriteProduct(String productId) async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getObjectData(data))
+      .map((data) => Helper.getObjectData(data as Map<String, dynamic>))
       .map((data) => Favorite.fromJSON(data));
 }
 
 Future<Stream<Favorite>> getFavorites() async {
   User _user = userRepo.currentUser.value;
   if (_user.apiToken == null) {
-    return Stream.value(null);
+    return Stream.value(Favorite());
   }
   final String _apiToken = 'api_token=${_user.apiToken}&';
   final String url =
@@ -368,7 +368,7 @@ Future<Stream<Favorite>> getFavorites() async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) => Favorite.fromJSON(data));
 }
@@ -384,7 +384,7 @@ Future<Favorite> addFavorite(Favorite favorite) async {
       '${GlobalConfiguration().getString('api_base_url')}favorites?$_apiToken';
   final client = new http.Client();
   final response = await client.post(
-    url,
+    Uri.parse(url),
     headers: {HttpHeaders.contentTypeHeader: 'application/json'},
     body: json.encode(favorite.toMap()),
   );
@@ -401,7 +401,7 @@ Future<Favorite> removeFavorite(Favorite favorite) async {
       '${GlobalConfiguration().getString('api_base_url')}favorites/${favorite.id}?$_apiToken';
   final client = new http.Client();
   final response = await client.delete(
-    url,
+    Uri.parse(url),
     headers: {HttpHeaders.contentTypeHeader: 'application/json'},
   );
   return Favorite.fromJSON(json.decode(response.body)['data']);
@@ -417,7 +417,7 @@ Future<Stream<Product>> getProductsOfMarket(String marketId) async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Product.fromJSON(data);
@@ -436,7 +436,7 @@ Future<Stream<Product>> getTrendingProductsOfMarket(String marketId) async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Product.fromJSON(data);
@@ -454,7 +454,7 @@ Future<Stream<Product>> getFeaturedProductsOfMarket(String marketId) async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Product.fromJSON(data);
@@ -467,7 +467,7 @@ Future<Review> addProductReview(Review review, Product product) async {
   final client = new http.Client();
   review.user = userRepo.currentUser.value;
   final response = await client.post(
-    url,
+    Uri.parse(url),
     headers: {HttpHeaders.contentTypeHeader: 'application/json'},
     body: json.encode(review.ofProductToMap(product)),
   );

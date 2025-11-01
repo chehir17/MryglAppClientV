@@ -5,7 +5,7 @@ import '../models/faq.dart';
 
 class FaqItemWidget extends StatelessWidget {
   Faq faq;
-  FaqItemWidget({Key key, this.faq}) : super(key: key);
+  FaqItemWidget({Key? key, required this.faq}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +25,14 @@ class FaqItemWidget extends StatelessWidget {
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
                 color: Theme.of(context).focusColor,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5))),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(5), topRight: Radius.circular(5))),
             child: Text(
-              Helper.skipHtml(this.faq.question),
-              style: Theme.of(context).textTheme.body2.merge(TextStyle(color: Theme.of(context).primaryColor)),
+              Helper.skipHtml(this.faq.question!),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall!
+                  .merge(TextStyle(color: Theme.of(context).primaryColor)),
             ),
           ),
           Container(
@@ -36,10 +40,12 @@ class FaqItemWidget extends StatelessWidget {
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
-                borderRadius: BorderRadius.only(bottomRight: Radius.circular(5), bottomLeft: Radius.circular(5))),
+                borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(5),
+                    bottomLeft: Radius.circular(5))),
             child: Text(
-              Helper.skipHtml(this.faq.answer),
-              style: Theme.of(context).textTheme.body1,
+              Helper.skipHtml(this.faq.answer!),
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
         ],

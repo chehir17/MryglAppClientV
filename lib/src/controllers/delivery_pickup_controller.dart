@@ -120,4 +120,25 @@ class DeliveryPickupController extends ControllerMVC {
       ));
     });
   }
+
+  void removeDeliveryAddress(model.Address address) {
+    Overlay.of(scaffoldKey.currentContext!).insert(loader);
+    userRepo.removeDeliveryAddress(address).then((value) {
+      setState(() {
+        addresses.removeWhere((a) => a.id == address.id);
+      });
+    }).catchError((e) {
+      loader.remove();
+      ScaffoldMessenger.of(scaffoldKey.currentState!.context)
+          .showSnackBar(SnackBar(
+        content: Text('Error removing address'), // Hardcoded string
+      ));
+    }).whenComplete(() {
+      Helper.hideLoader(loader);
+      ScaffoldMessenger.of(scaffoldKey.currentState!.context)
+          .showSnackBar(SnackBar(
+        content: Text('Address removed successfully'), // Hardcoded string
+      ));
+    });
+  }
 }

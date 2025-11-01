@@ -20,7 +20,7 @@ Future<User> login(User user) async {
   final String url = '${GlobalConfiguration().getString('api_base_url')}login';
   final client = new http.Client();
   final response = await client.post(
-    url,
+    Uri.parse(url),
     headers: {HttpHeaders.contentTypeHeader: 'application/json'},
     body: json.encode(user.toMap()),
   );
@@ -32,10 +32,11 @@ Future<User> login(User user) async {
 }
 
 Future<User> register(User user) async {
-  final String url = '${GlobalConfiguration().getString('api_base_url')}register';
+  final String url =
+      '${GlobalConfiguration().getString('api_base_url')}register';
   final client = new http.Client();
   final response = await client.post(
-    url,
+    Uri.parse(url),
     headers: {HttpHeaders.contentTypeHeader: 'application/json'},
     body: json.encode(user.toMap()),
   );
@@ -47,10 +48,11 @@ Future<User> register(User user) async {
 }
 
 Future<User> registerOrLogin(User user) async {
-  final String url = '${GlobalConfiguration().getString('api_base_url')}authwithfb';
+  final String url =
+      '${GlobalConfiguration().getString('api_base_url')}authwithfb';
   final client = new http.Client();
   final response = await client.post(
-    url,
+    Uri.parse(url),
     headers: {HttpHeaders.contentTypeHeader: 'application/json'},
     body: json.encode(user.toMap()),
   );
@@ -62,10 +64,11 @@ Future<User> registerOrLogin(User user) async {
 }
 
 Future<User> registerOrLoginWithGg(User user) async {
-  final String url = '${GlobalConfiguration().getString('api_base_url')}authwithgg';
+  final String url =
+      '${GlobalConfiguration().getString('api_base_url')}authwithgg';
   final client = new http.Client();
   final response = await client.post(
-    url,
+    Uri.parse(url),
     headers: {HttpHeaders.contentTypeHeader: 'application/json'},
     body: json.encode(user.toGgMap()),
   );
@@ -79,10 +82,11 @@ Future<User> registerOrLoginWithGg(User user) async {
 }
 
 Future<bool> resetPassword(User user) async {
-  final String url = '${GlobalConfiguration().getString('api_base_url')}send_reset_link_email';
+  final String url =
+      '${GlobalConfiguration().getString('api_base_url')}send_reset_link_email';
   final client = new http.Client();
   final response = await client.post(
-    url,
+    Uri.parse(url),
     headers: {HttpHeaders.contentTypeHeader: 'application/json'},
     body: json.encode(user.toMap()),
   );
@@ -103,7 +107,8 @@ Future<void> logout() async {
 void setCurrentUser(jsonString) async {
   if (json.decode(jsonString)['data'] != null) {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('current_user', json.encode(json.decode(jsonString)['data']));
+    await prefs.setString(
+        'current_user', json.encode(json.decode(jsonString)['data']));
   }
 }
 
@@ -114,45 +119,72 @@ Future<void> setCreditCard(CreditCard creditCard) async {
   }
 }
 
+// Future<User> getCurrentUser() async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+//   //prefs.clear();
+//   if (currentUser.value.auth == null && prefs.containsKey('current_user')) {
+//     currentUser.value =
+//         User.fromJSON(json.decode(await prefs.get('current_user')));
+//     currentUser.value.auth = true;
+//   } else {
+//     currentUser.value.auth = false;
+//   }
+//   currentUser.notifyListeners();
+//   return currentUser.value;
+// }
+
 Future<User> getCurrentUser() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //prefs.clear();
+  // prefs.clear();
+
   if (currentUser.value.auth == null && prefs.containsKey('current_user')) {
-    currentUser.value = User.fromJSON(json.decode(await prefs.get('current_user')));
-    currentUser.value.auth = true;
+    final String? userJson = prefs.getString('current_user');
+    if (userJson != null && userJson.isNotEmpty) {
+      currentUser.value = User.fromJSON(json.decode(userJson));
+      currentUser.value.auth = true;
+    } else {
+      currentUser.value.auth = false;
+    }
   } else {
     currentUser.value.auth = false;
   }
+
   currentUser.notifyListeners();
   return currentUser.value;
 }
 
 Future<CreditCard> getCreditCard() async {
-  CreditCard _creditCard = new CreditCard();
+  CreditCard _creditCard = CreditCard();
   SharedPreferences prefs = await SharedPreferences.getInstance();
+
   if (prefs.containsKey('credit_card')) {
-    _creditCard = CreditCard.fromJSON(json.decode(await prefs.get('credit_card')));
+    final String? cardJson = prefs.getString('credit_card');
+    if (cardJson != null) {
+      _creditCard = CreditCard.fromJSON(json.decode(cardJson));
+    }
   }
+
   return _creditCard;
 }
 
-Future<User> update(User user,{context}) async {
+Future<User?> update(User user, {context}) async {
   try {
     // User oldUser = currentUser.value;
     final String _apiToken = 'api_token=${currentUser.value.apiToken}';
-    final String url = '${GlobalConfiguration().getString('api_base_url')}users/${currentUser.value.id}?$_apiToken';
+    final String url =
+        '${GlobalConfiguration().getString('api_base_url')}users/${currentUser.value.id}?$_apiToken';
     final client = new http.Client();
     print(url);
     final response = await client.post(
-      url,
+      Uri.parse(url),
       headers: {HttpHeaders.contentTypeHeader: 'application/json'},
       body: json.encode(user.toMap()),
     );
 
     // if(response.statusCode == 200){
-      setCurrentUser(response.body);
-      currentUser.value = User.fromJSON(json.decode(response.body)['data']);
-      return currentUser.value;
+    setCurrentUser(response.body);
+    currentUser.value = User.fromJSON(json.decode(response.body)['data']);
+    return currentUser.value;
     // }
 
     // return oldUser;
@@ -175,7 +207,7 @@ Future<Stream<Address>> getAddresses() async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Address.fromJSON(data);
@@ -186,10 +218,11 @@ Future<Address> addAddress(Address address) async {
   User _user = userRepo.currentUser.value;
   final String _apiToken = 'api_token=${_user.apiToken}';
   address.userId = _user.id;
-  final String url = '${GlobalConfiguration().getString('api_base_url')}delivery_addresses?$_apiToken';
+  final String url =
+      '${GlobalConfiguration().getString('api_base_url')}delivery_addresses?$_apiToken';
   final client = new http.Client();
   final response = await client.post(
-    url,
+    Uri.parse(url),
     headers: {HttpHeaders.contentTypeHeader: 'application/json'},
     body: json.encode(address.toMap()),
   );
@@ -201,10 +234,11 @@ Future<Address> updateAddress(Address address) async {
   User _user = userRepo.currentUser.value;
   final String _apiToken = 'api_token=${_user.apiToken}';
   address.userId = _user.id;
-  final String url = '${GlobalConfiguration().getString('api_base_url')}delivery_addresses/${address.id}?$_apiToken';
+  final String url =
+      '${GlobalConfiguration().getString('api_base_url')}delivery_addresses/${address.id}?$_apiToken';
   final client = new http.Client();
   final response = await client.put(
-    url,
+    Uri.parse(url),
     headers: {HttpHeaders.contentTypeHeader: 'application/json'},
     body: json.encode(address.toMap()),
   );
@@ -214,10 +248,11 @@ Future<Address> updateAddress(Address address) async {
 Future<Address> removeDeliveryAddress(Address address) async {
   User _user = userRepo.currentUser.value;
   final String _apiToken = 'api_token=${_user.apiToken}';
-  final String url = '${GlobalConfiguration().getString('api_base_url')}delivery_addresses/${address.id}?$_apiToken';
+  final String url =
+      '${GlobalConfiguration().getString('api_base_url')}delivery_addresses/${address.id}?$_apiToken';
   final client = new http.Client();
   final response = await client.delete(
-    url,
+    Uri.parse(url),
     headers: {HttpHeaders.contentTypeHeader: 'application/json'},
   );
   return Address.fromJSON(json.decode(response.body)['data']);

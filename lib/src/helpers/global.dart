@@ -13,4 +13,4 @@ bool glbReview = false;
 String deliveryIdG = 'null';
 String oldPhone = '';
 List<User> listUsers = <User>[];
-Paginate productsPaginate = Paginate();
+Paginate productsPaginate = Paginate.empty();

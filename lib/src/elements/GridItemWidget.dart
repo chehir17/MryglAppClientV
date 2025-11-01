@@ -9,15 +9,17 @@ class GridItemWidget extends StatelessWidget {
   Market market;
   String heroTag;
 
-  GridItemWidget({Key key, this.market, this.heroTag}) : super(key: key);
+  GridItemWidget({Key? key, required this.market, required this.heroTag})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       highlightColor: Colors.transparent,
-      splashColor: Theme.of(context).accentColor.withOpacity(0.08),
+      splashColor: Theme.of(context).colorScheme.secondary.withOpacity(0.08),
       onTap: () {
-        Navigator.of(context).pushNamed('/Details', arguments: RouteArgument(id: market.id, heroTag: heroTag));
+        Navigator.of(context).pushNamed('/Details',
+            arguments: RouteArgument(id: market.id, heroTag: heroTag));
       },
       child: Container(
         margin: EdgeInsets.all(5),
@@ -26,7 +28,10 @@ class GridItemWidget extends StatelessWidget {
             color: Theme.of(context).primaryColor,
             borderRadius: BorderRadius.all(Radius.circular(5)),
             boxShadow: [
-              BoxShadow(color: Theme.of(context).focusColor.withOpacity(0.05), offset: Offset(0, 5), blurRadius: 5)
+              BoxShadow(
+                  color: Theme.of(context).focusColor.withOpacity(0.05),
+                  offset: Offset(0, 5),
+                  blurRadius: 5)
             ]),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,12 +39,12 @@ class GridItemWidget extends StatelessWidget {
           children: <Widget>[
             Container(
               child: Hero(
-                tag: heroTag + market.id,
+                tag: heroTag + market.id!,
                 child: CachedNetworkImage(
                   height: 82,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  imageUrl: market.image.thumb,
+                  imageUrl: market.image!.thumb!,
                   placeholder: (context, url) => Image.asset(
                     'assets/img/loading.gif',
                     fit: BoxFit.cover,
@@ -52,14 +57,14 @@ class GridItemWidget extends StatelessWidget {
             ),
             SizedBox(height: 5),
             Text(
-              market.name,
-              style: Theme.of(context).textTheme.body1,
+              market.name!,
+              style: Theme.of(context).textTheme.bodyMedium,
               softWrap: false,
               overflow: TextOverflow.fade,
             ),
             SizedBox(height: 2),
             Row(
-              children: Helper.getStarsList(double.parse(market.rate)),
+              children: Helper.getStarsList(double.parse(market.rate!)),
             ),
           ],
         ),

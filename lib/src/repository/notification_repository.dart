@@ -13,7 +13,7 @@ import 'settings_repository.dart';
 Future<Stream<Notification>> getNotifications() async {
   User _user = userRepo.currentUser.value;
   if (_user.apiToken == null) {
-    return new Stream.value(null);
+    return new Stream.value(Notification()); //empty notif
   }
   final String _apiToken = 'api_token=${_user.apiToken}&';
   final String url =
@@ -25,7 +25,7 @@ Future<Stream<Notification>> getNotifications() async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     print(data);
@@ -33,17 +33,22 @@ Future<Stream<Notification>> getNotifications() async {
   });
 }
 
-Future<void> sendNotification(String body, String title, User user) async {
+Future<void> sendNotification(
+    String body, String titleMedium, User user) async {
   final data = {
-    "notification": {"body": "$body", "title": "$title"},
+    "notification": {"body": "$body", "titleMedium": "$titleMedium"},
     "priority": "high",
-    "data": {"click_action": "FLUTTER_NOTIFICATION_CLICK", "id": "messages", "status": "done"},
+    "data": {
+      "click_action": "FLUTTER_NOTIFICATION_CLICK",
+      "id": "messages",
+      "status": "done"
+    },
     "to": "${user.deviceToken}"
   };
   final String url = 'https://fcm.googleapis.com/fcm/send';
   final client = new http.Client();
   final response = await client.post(
-    url,
+    Uri.parse(url),
     headers: {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: "key=${setting.value.fcmKey}",
@@ -54,5 +59,3 @@ Future<void> sendNotification(String body, String title, User user) async {
     print('notification sending failed');
   }
 }
-
-

@@ -6,7 +6,7 @@ import '../models/market.dart';
 class GridWidget extends StatelessWidget {
   List<Market> marketsList;
   String heroTag;
-  GridWidget({Key key, this.marketsList, this.heroTag});
+  GridWidget({Key? key, required this.marketsList, required this.heroTag});
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +15,11 @@ class GridWidget extends StatelessWidget {
       shrinkWrap: true,
       primary: false,
       padding: EdgeInsets.symmetric(vertical: 10),
-      crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 4,
+      crossAxisCount:
+          MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 4,
       children: List.generate(marketsList.length, (index) {
-        return GridItemWidget(market: marketsList.elementAt(index), heroTag: heroTag);
+        return GridItemWidget(
+            market: marketsList.elementAt(index), heroTag: heroTag);
       }),
     );
   }

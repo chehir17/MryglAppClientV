@@ -16,10 +16,10 @@ class CheckoutWidget extends StatefulWidget {
 }
 
 class _CheckoutWidgetState extends StateMVC<CheckoutWidget> {
-  CheckoutController _con;
+  late CheckoutController _con;
 
   _CheckoutWidgetState() : super(CheckoutController()) {
-    _con = controller;
+    _con = controller as CheckoutController;
   }
   @override
   void initState() {
@@ -37,7 +37,10 @@ class _CheckoutWidgetState extends StateMVC<CheckoutWidget> {
         centerTitle: true,
         title: Text(
           S.of(context).checkout,
-          style: Theme.of(context).textTheme.title.merge(TextStyle(letterSpacing: 1.3)),
+          style: Theme.of(context)
+              .textTheme
+              .titleMedium!
+              .merge(TextStyle(letterSpacing: 1.3)),
         ),
       ),
       body: Stack(
@@ -60,13 +63,13 @@ class _CheckoutWidgetState extends StateMVC<CheckoutWidget> {
                       S.of(context).payment_mode,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.display1,
+                      style: Theme.of(context).textTheme.headlineMedium,
                     ),
                     subtitle: Text(
                       S.of(context).select_your_preferred_payment_mode,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.caption,
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
                 ),
@@ -80,7 +83,7 @@ class _CheckoutWidgetState extends StateMVC<CheckoutWidget> {
                 setting.value.payPalEnabled
                     ? Text(
                         S.of(context).or_checkout_with,
-                        style: Theme.of(context).textTheme.caption,
+                        style: Theme.of(context).textTheme.bodySmall,
                       )
                     : SizedBox(
                         height: 0,
@@ -89,13 +92,17 @@ class _CheckoutWidgetState extends StateMVC<CheckoutWidget> {
                 setting.value.payPalEnabled
                     ? SizedBox(
                         width: 320,
-                        child: FlatButton(
+                        child: ElevatedButton(
                           onPressed: () {
-                            Navigator.of(context).pushReplacementNamed('/PayPal');
+                            Navigator.of(context)
+                                .pushReplacementNamed('/PayPal');
                           },
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          color: Theme.of(context).focusColor.withOpacity(0.2),
-                          shape: StadiumBorder(),
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            backgroundColor:
+                                Theme.of(context).focusColor.withOpacity(0.2),
+                            shape: StadiumBorder(),
+                          ),
                           child: Image.asset(
                             'assets/img/paypal2.png',
                             height: 28,
@@ -116,10 +123,14 @@ class _CheckoutWidgetState extends StateMVC<CheckoutWidget> {
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
-                  borderRadius: BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20)),
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(20),
+                      topLeft: Radius.circular(20)),
                   boxShadow: [
                     BoxShadow(
-                        color: Theme.of(context).focusColor.withOpacity(0.15), offset: Offset(0, -2), blurRadius: 5.0)
+                        color: Theme.of(context).focusColor.withOpacity(0.15),
+                        offset: Offset(0, -2),
+                        blurRadius: 5.0)
                   ]),
               child: SizedBox(
                 width: MediaQuery.of(context).size.width - 40,
@@ -132,10 +143,11 @@ class _CheckoutWidgetState extends StateMVC<CheckoutWidget> {
                         Expanded(
                           child: Text(
                             S.of(context).subtotal,
-                            style: Theme.of(context).textTheme.body2,
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ),
-                        Helper.getPrice(_con.subTotal, context, style: Theme.of(context).textTheme.subhead)
+                        Helper.getPrice(_con.subTotal, context,
+                            style: Theme.of(context).textTheme.bodyMedium)
                       ],
                     ),
                     SizedBox(height: 5),
@@ -144,10 +156,11 @@ class _CheckoutWidgetState extends StateMVC<CheckoutWidget> {
                         Expanded(
                           child: Text(
                             '${S.of(context).tax} (${setting.value.defaultTax}%)',
-                            style: Theme.of(context).textTheme.body2,
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ),
-                        Helper.getPrice(_con.taxAmount, context, style: Theme.of(context).textTheme.subhead)
+                        Helper.getPrice(_con.taxAmount, context,
+                            style: Theme.of(context).textTheme.bodyMedium)
                       ],
                     ),
                     Divider(height: 30),
@@ -156,30 +169,36 @@ class _CheckoutWidgetState extends StateMVC<CheckoutWidget> {
                         Expanded(
                           child: Text(
                             S.of(context).total,
-                            style: Theme.of(context).textTheme.title,
+                            style: Theme.of(context).textTheme.titleMedium,
                           ),
                         ),
-                        Helper.getPrice(_con.total, context, style: Theme.of(context).textTheme.title) 
+                        Helper.getPrice(_con.total, context,
+                            style: Theme.of(context).textTheme.titleMedium)
                       ],
                     ),
                     SizedBox(height: 20),
                     SizedBox(
                       width: MediaQuery.of(context).size.width - 40,
-                      child: FlatButton(
+                      child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pushNamed('/OrderSuccess',
-                              arguments: new RouteArgument(param: 'Credit Card (Stripe Gateway)'));
+                              arguments: new RouteArgument(
+                                  param: 'Credit Card (Stripe Gateway)'));
 //                                      Navigator.of(context).pushReplacementNamed('/Checkout',
 //                                          arguments:
 //                                              new RouteArgument(param: [_con.carts, _con.total, setting.defaultTax]));
                         },
-                        padding: EdgeInsets.symmetric(vertical: 14),
-                        color: Theme.of(context).accentColor,
-                        shape: StadiumBorder(),
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 14),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.secondary,
+                          shape: StadiumBorder(),
+                        ),
                         child: Text(
                           S.of(context).confirm_payment,
                           textAlign: TextAlign.start,
-                          style: TextStyle(color: Theme.of(context).primaryColor),
+                          style:
+                              TextStyle(color: Theme.of(context).primaryColor),
                         ),
                       ),
                     ),

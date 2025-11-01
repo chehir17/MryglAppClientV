@@ -1,9 +1,9 @@
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:markets/src/elements/CircularLoadingWidget.dart';
 import 'package:markets/src/elements/SearchBarWidget.dart';
 import 'package:markets/src/helpers/global.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
+import 'package:another_flushbar/flushbar.dart';
 
 import '../../generated/i18n.dart';
 import '../controllers/settings_controller.dart';
@@ -20,31 +20,32 @@ class SettingsWidget extends StatefulWidget {
 }
 
 class _SettingsWidgetState extends StateMVC<SettingsWidget> {
-  SettingsController _con;
+  late SettingsController _con;
   GlobalKey<FormState> _profileSettingsFormKey = new GlobalKey<FormState>();
 
   _SettingsWidgetState() : super(SettingsController()) {
-    _con = controller;
+    _con = controller as SettingsController;
   }
 
   @override
   void initState() {
     super.initState();
-    if(['null',null,''].contains(currentUser.value.phone)){
-      Future.delayed(Duration.zero,() {
+    if (['null', null, ''].contains(currentUser.value.phone)) {
+      Future.delayed(Duration.zero, () {
         showDialog(
             context: context,
             builder: (context) {
               return SimpleDialog(
                 contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                titlePadding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                titlePadding:
+                    EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                 title: Row(
                   children: <Widget>[
                     Icon(Icons.person),
                     SizedBox(width: 10),
                     Text(
                       S.of(context).profile_settings,
-                      style: Theme.of(context).textTheme.body2,
+                      style: Theme.of(context).textTheme.bodySmall,
                     )
                   ],
                 ),
@@ -74,9 +75,16 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
                         new TextFormField(
                           style: TextStyle(color: Theme.of(context).hintColor),
                           keyboardType: TextInputType.text,
-                          decoration: getInputDecoration(hintText: 'XXX-XXX-XXX', labelText: S.of(context).phone),
-                          initialValue: [null,'null'].contains(currentUser.value.phone) ? null : currentUser.value.phone,
-                          validator: (input) => input.trim().length < 3 ? S.of(context).not_a_valid_phone : null,
+                          decoration: getInputDecoration(
+                              hintText: 'XXX-XXX-XXX',
+                              labelText: S.of(context).phone),
+                          initialValue:
+                              [null, 'null'].contains(currentUser.value.phone)
+                                  ? null
+                                  : currentUser.value.phone,
+                          validator: (input) => input!.trim().length < 3
+                              ? S.of(context).not_a_valid_phone
+                              : null,
                           onSaved: (input) => currentUser.value.phone = input,
                         ),
                         // new TextFormField(
@@ -113,7 +121,8 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
                         onPressed: _submit,
                         child: Text(
                           S.of(context).save,
-                          style: TextStyle(color: Theme.of(context).accentColor),
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary),
                         ),
                       ),
                     ],
@@ -124,11 +133,11 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
               );
             });
         Flushbar(
-              // title:  "Ooops !!",
-              message:  S.current.update_phone_number,
-              duration:  Duration(seconds: 5),     
-              flushbarPosition: FlushbarPosition.TOP,         
-            )..show(context);
+          // titleMedium:  "Ooops !!",
+          message: S.current.update_phone_number,
+          duration: Duration(seconds: 5),
+          flushbarPosition: FlushbarPosition.TOP,
+        )..show(context);
       });
     }
   }
@@ -143,7 +152,10 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
           centerTitle: true,
           title: Text(
             S.of(context).settings,
-            style: Theme.of(context).textTheme.title.merge(TextStyle(letterSpacing: 1.3)),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .merge(TextStyle(letterSpacing: 1.3)),
           ),
         ),
         body: currentUser.value.id == null
@@ -157,20 +169,22 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
                       child: SearchBarWidget(),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
                       child: Row(
                         children: <Widget>[
                           Expanded(
                             child: Column(
                               children: <Widget>[
                                 Text(
-                                  currentUser.value.name,
+                                  currentUser.value.name!,
                                   textAlign: TextAlign.left,
-                                  style: Theme.of(context).textTheme.display2,
+                                  style:
+                                      Theme.of(context).textTheme.displaySmall,
                                 ),
                                 Text(
-                                  currentUser.value.email,
-                                  style: Theme.of(context).textTheme.caption,
+                                  currentUser.value.email!,
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 )
                               ],
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,23 +196,27 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
                               child: InkWell(
                                 borderRadius: BorderRadius.circular(300),
                                 onTap: () {
-                                  Navigator.of(context).pushNamed('/Tabs', arguments: 1);
+                                  Navigator.of(context)
+                                      .pushNamed('/Tabs', arguments: 1);
                                 },
                                 child: CircleAvatar(
-                                  backgroundImage: NetworkImage(currentUser.value.image.thumb),
+                                  backgroundImage: NetworkImage(
+                                      currentUser.value.image!.thumb!),
                                 ),
                               )),
                         ],
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       decoration: BoxDecoration(
                         color: Theme.of(context).primaryColor,
                         borderRadius: BorderRadius.circular(6),
                         boxShadow: [
                           BoxShadow(
-                              color: Theme.of(context).hintColor.withOpacity(0.15),
+                              color:
+                                  Theme.of(context).hintColor.withOpacity(0.15),
                               offset: Offset(0, 3),
                               blurRadius: 10)
                         ],
@@ -211,7 +229,7 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
                             leading: Icon(Icons.person),
                             title: Text(
                               S.of(context).profile_settings,
-                              style: Theme.of(context).textTheme.body2,
+                              style: Theme.of(context).textTheme.bodySmall,
                             ),
                             trailing: ButtonTheme(
                               padding: EdgeInsets.all(0),
@@ -220,7 +238,7 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
                               child: ProfileSettingsDialog(
                                 user: currentUser.value,
                                 onChanged: () {
-                                  _con.update(currentUser.value); 
+                                  _con.update(currentUser.value);
                                   setState(() {});
                                   // if(cart && currentUser.value.phone != "null") Navigator.of(context).pop();
                                 },
@@ -232,11 +250,12 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
                             dense: true,
                             title: Text(
                               S.of(context).full_name,
-                              style: Theme.of(context).textTheme.body1,
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             trailing: Text(
-                              currentUser.value.name,
-                              style: TextStyle(color: Theme.of(context).focusColor),
+                              currentUser.value.name!,
+                              style: TextStyle(
+                                  color: Theme.of(context).focusColor),
                             ),
                           ),
                           ListTile(
@@ -244,11 +263,12 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
                             dense: true,
                             title: Text(
                               S.of(context).email,
-                              style: Theme.of(context).textTheme.body1,
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             trailing: Text(
-                              currentUser.value.email,
-                              style: TextStyle(color: Theme.of(context).focusColor),
+                              currentUser.value.email!,
+                              style: TextStyle(
+                                  color: Theme.of(context).focusColor),
                             ),
                           ),
                           ListTile(
@@ -256,19 +276,20 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
                             dense: true,
                             title: Text(
                               S.of(context).phone,
-                              style: Theme.of(context).textTheme.body1,
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             trailing: Text(
-                              currentUser.value.phone,
-                              style: TextStyle(color: Theme.of(context).focusColor),
+                              currentUser.value.phone!,
+                              style: TextStyle(
+                                  color: Theme.of(context).focusColor),
                             ),
                           ),
                           // ListTile(
                           //   onTap: () {},
                           //   dense: true,
-                          //   title: Text(
+                          //   titleMedium: Text(
                           //     S.of(context).address,
-                          //     style: Theme.of(context).textTheme.body1,
+                          //     style: Theme.of(context).textTheme.bodyMedium,
                           //   ),
                           //   trailing: Text(
                           //     currentUser.value.address != null ?
@@ -281,9 +302,9 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
                           // ListTile(
                           //   onTap: () {},
                           //   dense: true,
-                          //   title: Text(
+                          //   titleMedium: Text(
                           //     S.of(context).about,
-                          //     style: Theme.of(context).textTheme.body1,
+                          //     style: Theme.of(context).textTheme.bodyMedium,
                           //   ),
                           //   trailing: Text(
                           //     Helper.limitString(currentUser.value.bio),
@@ -313,9 +334,9 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
                     //     children: <Widget>[
                     //       ListTile(
                     //         leading: Icon(Icons.credit_card),
-                    //         title: Text(
+                    //         titleMedium: Text(
                     //           S.of(context).payments_settings,
-                    //           style: Theme.of(context).textTheme.body2,
+                    //           style: Theme.of(context).textTheme.bodySmall,
                     //         ),
                     //         trailing: ButtonTheme(
                     //           padding: EdgeInsets.all(0),
@@ -332,9 +353,9 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
                     //       ),
                     //       ListTile(
                     //         dense: true,
-                    //         title: Text(
+                    //         titleMedium: Text(
                     //           S.of(context).default_credit_card,
-                    //           style: Theme.of(context).textTheme.body1,
+                    //           style: Theme.of(context).textTheme.bodyMedium,
                     //         ),
                     //         trailing: Text(
                     //           _con.creditCard.number.isNotEmpty
@@ -347,13 +368,15 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
                     //   ),
                     // ),
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       decoration: BoxDecoration(
                         color: Theme.of(context).primaryColor,
                         borderRadius: BorderRadius.circular(6),
                         boxShadow: [
                           BoxShadow(
-                              color: Theme.of(context).hintColor.withOpacity(0.15),
+                              color:
+                                  Theme.of(context).hintColor.withOpacity(0.15),
                               offset: Offset(0, 3),
                               blurRadius: 10)
                         ],
@@ -366,7 +389,7 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
                             leading: Icon(Icons.settings),
                             title: Text(
                               S.of(context).app_settings,
-                              style: Theme.of(context).textTheme.body2,
+                              style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ),
                           ListTile(
@@ -384,18 +407,20 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
                                 SizedBox(width: 10),
                                 Text(
                                   S.of(context).languages,
-                                  style: Theme.of(context).textTheme.body1,
+                                  style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                               ],
                             ),
                             trailing: Text(
                               S.of(context).english,
-                              style: TextStyle(color: Theme.of(context).focusColor),
+                              style: TextStyle(
+                                  color: Theme.of(context).focusColor),
                             ),
                           ),
                           ListTile(
                             onTap: () {
-                              Navigator.of(context).pushNamed('/DeliveryAddresses');
+                              Navigator.of(context)
+                                  .pushNamed('/DeliveryAddresses');
                             },
                             dense: true,
                             title: Row(
@@ -408,7 +433,7 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
                                 SizedBox(width: 10),
                                 Text(
                                   S.of(context).delivery_addresses,
-                                  style: Theme.of(context).textTheme.body1,
+                                  style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                               ],
                             ),
@@ -428,7 +453,7 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
                                 SizedBox(width: 10),
                                 Text(
                                   S.of(context).help_support,
-                                  style: Theme.of(context).textTheme.body1,
+                                  style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                               ],
                             ),
@@ -441,25 +466,28 @@ class _SettingsWidgetState extends StateMVC<SettingsWidget> {
               ));
   }
 
-  InputDecoration getInputDecoration({String hintText, String labelText}) {
+  InputDecoration getInputDecoration({String? hintText, String? labelText}) {
     return new InputDecoration(
       hintText: hintText,
       labelText: labelText,
-      hintStyle: Theme.of(context).textTheme.body1.merge(
+      hintStyle: Theme.of(context).textTheme.bodyMedium!.merge(
             TextStyle(color: Theme.of(context).focusColor),
           ),
-      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Theme.of(context).hintColor.withOpacity(0.2))),
-      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Theme.of(context).hintColor)),
-      hasFloatingPlaceholder: true,
-      labelStyle: Theme.of(context).textTheme.body1.merge(
+      enabledBorder: UnderlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).hintColor.withOpacity(0.2))),
+      focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Theme.of(context).hintColor)),
+      floatingLabelBehavior: FloatingLabelBehavior.auto,
+      labelStyle: Theme.of(context).textTheme.bodyMedium!.merge(
             TextStyle(color: Theme.of(context).hintColor),
           ),
     );
   }
 
   void _submit() {
-    if (_profileSettingsFormKey.currentState.validate()) {
-      _profileSettingsFormKey.currentState.save();
+    if (_profileSettingsFormKey.currentState!.validate()) {
+      _profileSettingsFormKey.currentState!.save();
       _con.update(currentUser.value);
       // Navigator.pop(context);
     }

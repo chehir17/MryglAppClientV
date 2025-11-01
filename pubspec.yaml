@@ -28,7 +28,6 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  card_swiper: ^3.0.1
   google_maps_flutter: ^2.12.3
   flutter_google_places_sdk: 0.4.2+1
   provider: ^6.1.2
@@ -37,7 +36,6 @@ dependencies:
   intl: ^0.20.2
   html: ^0.15.5
   shared_preferences: ^2.3.2
-  flutter_html: ^3.0.0-beta.2
   flutter_svg: ^2.0.10+1
   location: ^8.0.1
   theme_provider: ^0.6.0
@@ -49,21 +47,26 @@ dependencies:
   cloud_firestore: ^6.0.0
   firebase_analytics: ^12.0.0
   google_sign_in: ^7.1.1
-  geolocator: ^14.0.2
+  geolocator: ^10.1.1
   carousel_slider: ^5.0.0
   flutter_signin_button: ^2.0.0
   flutter_facebook_auth: ^7.1.2
-  getwidget: ^6.0.0
+  getwidget: ^7.0.0
   cached_network_image: ^3.4.1
   double_back_to_close_app: ^2.1.0
   another_flushbar: ^1.12.30
   permission_handler: ^12.0.1
-  package_info_plus: ^8.0.2
-  giffy_dialog: ^2.3.0
+  package_info_plus: ^4.1.0
+  awesome_dialog: ^3.2.0
   rating_dialog: ^2.0.4
   sign_button: ^2.0.3
   responsive_grid: ^2.2.0
   google_maps_utils: ^2.0.0
+  flex_color_scheme: ^8.0.0
+  flutter_html: ^3.0.0
+  google_maps_place_picker_mb: ^3.1.2
+  card_swiper: ^3.0.1
+  
 
 
 dev_dependencies:
@@ -107,7 +110,7 @@ flutter:
     - assets/img/pay_pickup.png
     - assets/img/logo.png
     - assets/img/Mriguel.jpg
-    - assets/img/title.png
+    - assets/img/titleMedium.png
     - assets/img/backimg.png
     - assets/img/loading.gif
     - assets/img/google_play.png

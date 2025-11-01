@@ -12,17 +12,17 @@ import '../models/route_argument.dart';
 class OrderSuccessWidget extends StatefulWidget {
   RouteArgument routeArgument;
 
-  OrderSuccessWidget({Key key, this.routeArgument}) : super(key: key);
+  OrderSuccessWidget({Key? key, required this.routeArgument}) : super(key: key);
 
   @override
   _OrderSuccessWidgetState createState() => _OrderSuccessWidgetState();
 }
 
 class _OrderSuccessWidgetState extends StateMVC<OrderSuccessWidget> {
-  CheckoutController _con;
+  late CheckoutController _con;
 
   _OrderSuccessWidgetState() : super(CheckoutController()) {
-    _con = controller;
+    _con = controller as CheckoutController;
   }
 
   @override
@@ -53,7 +53,7 @@ class _OrderSuccessWidgetState extends StateMVC<OrderSuccessWidget> {
             S.of(context).confirmation,
             style: Theme.of(context)
                 .textTheme
-                .title
+                .titleMedium!
                 .merge(TextStyle(letterSpacing: 1.3)),
           ),
         ),
@@ -140,7 +140,7 @@ class _OrderSuccessWidgetState extends StateMVC<OrderSuccessWidget> {
                             textAlign: TextAlign.center,
                             style: Theme.of(context)
                                 .textTheme
-                                .display2
+                                .displaySmall!
                                 .merge(TextStyle(fontWeight: FontWeight.w300)),
                           ),
                         ),
@@ -177,11 +177,13 @@ class _OrderSuccessWidgetState extends StateMVC<OrderSuccessWidget> {
                                 Expanded(
                                   child: Text(
                                     S.of(context).subtotal,
-                                    style: Theme.of(context).textTheme.body2,
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
                                   ),
                                 ),
                                 Helper.getPrice(_con.subTotal, context,
-                                    style: Theme.of(context).textTheme.subhead)
+                                    style:
+                                        Theme.of(context).textTheme.titleSmall)
                               ],
                             ),
                             SizedBox(height: 3),
@@ -190,11 +192,13 @@ class _OrderSuccessWidgetState extends StateMVC<OrderSuccessWidget> {
                                 Expanded(
                                   child: Text(
                                     '${S.of(context).coupon_discount} ($couponDiscount%)',
-                                    style: Theme.of(context).textTheme.body2,
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
                                   ),
                                 ),
                                 Helper.getPrice(-couponDiscountValue, context,
-                                    style: Theme.of(context).textTheme.subhead)
+                                    style:
+                                        Theme.of(context).textTheme.titleSmall)
                               ],
                             ),
                             SizedBox(height: 3),
@@ -205,8 +209,9 @@ class _OrderSuccessWidgetState extends StateMVC<OrderSuccessWidget> {
                                       Expanded(
                                         child: Text(
                                           S.of(context).delivery_fee,
-                                          style:
-                                              Theme.of(context).textTheme.body2,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall,
                                         ),
                                       ),
                                       couponDiscountForDelivery > 0
@@ -225,7 +230,7 @@ class _OrderSuccessWidgetState extends StateMVC<OrderSuccessWidget> {
                                           context,
                                           style: Theme.of(context)
                                               .textTheme
-                                              .subhead)
+                                              .titleSmall)
                                     ],
                                   ),
                             SizedBox(height: 3),
@@ -233,12 +238,14 @@ class _OrderSuccessWidgetState extends StateMVC<OrderSuccessWidget> {
                               children: <Widget>[
                                 Expanded(
                                   child: Text(
-                                    "${S.of(context).tax} (${_con.carts[0].product.market.defaultTax}%)",
-                                    style: Theme.of(context).textTheme.body2,
+                                    "${S.of(context).tax} (${_con.carts[0].product!.market.defaultTax}%)",
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
                                   ),
                                 ),
                                 Helper.getPrice(_con.taxAmount, context,
-                                    style: Theme.of(context).textTheme.subhead)
+                                    style:
+                                        Theme.of(context).textTheme.titleSmall)
                               ],
                             ),
                             Divider(height: 30),
@@ -247,24 +254,29 @@ class _OrderSuccessWidgetState extends StateMVC<OrderSuccessWidget> {
                                 Expanded(
                                   child: Text(
                                     S.of(context).total,
-                                    style: Theme.of(context).textTheme.title,
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
                                   ),
                                 ),
                                 Helper.getPrice(_con.total, context,
-                                    style: Theme.of(context).textTheme.title)
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium)
                               ],
                             ),
                             SizedBox(height: 20),
                             SizedBox(
                               width: MediaQuery.of(context).size.width - 40,
-                              child: FlatButton(
+                              child: ElevatedButton(
                                 onPressed: () {
                                   Navigator.of(context)
                                       .pushNamed('/Pages', arguments: 3);
                                 },
-                                padding: EdgeInsets.symmetric(vertical: 14),
-                                color: Theme.of(context).accentColor,
-                                shape: StadiumBorder(),
+                                style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(vertical: 14),
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.secondary,
+                                  shape: StadiumBorder(),
+                                ),
                                 child: Text(
                                   S.of(context).my_orders,
                                   textAlign: TextAlign.start,

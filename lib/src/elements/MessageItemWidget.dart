@@ -7,7 +7,9 @@ import '../models/route_argument.dart';
 import '../repository/user_repository.dart';
 
 class MessageItemWidget extends StatefulWidget {
-  MessageItemWidget({Key key, this.message, this.onDismissed}) : super(key: key);
+  MessageItemWidget(
+      {Key? key, required this.message, required this.onDismissed})
+      : super(key: key);
   final model.Conversation message;
   final ValueChanged<model.Conversation> onDismissed;
 
@@ -40,14 +42,19 @@ class _MessageItemWidgetState extends State<MessageItemWidget> {
         });
 
         // Then show a snackbar.
-        Scaffold.of(context).showSnackBar(SnackBar(content: Text("The conversation with ${widget.message.name} is dismissed")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                "The conversation with ${widget.message.name} is dismissed")));
       },
       child: InkWell(
         onTap: () {
-          Navigator.of(context).pushNamed('/Chat', arguments: RouteArgument(param: widget.message));
+          Navigator.of(context).pushNamed('/Chat',
+              arguments: RouteArgument(param: widget.message));
         },
         child: Container(
-          color: this.widget.message.readByUsers.contains(currentUser.value.id) ? Colors.transparent : Theme.of(context).focusColor.withOpacity(0.05),
+          color: this.widget.message.readByUsers.contains(currentUser.value.id)
+              ? Colors.transparent
+              : Theme.of(context).focusColor.withOpacity(0.05),
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -63,7 +70,14 @@ class _MessageItemWidgetState extends State<MessageItemWidget> {
                         height: 140,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        imageUrl: this.widget.message.users.firstWhere((element) => element.id != currentUser.value.id).image.thumb,
+                        imageUrl: this
+                            .widget
+                            .message
+                            .users
+                            .firstWhere(
+                                (element) => element.id != currentUser.value.id)
+                            .image!
+                            .thumb!,
                         placeholder: (context, url) => Image.asset(
                           'assets/img/loading.gif',
                           fit: BoxFit.cover,
@@ -100,18 +114,30 @@ class _MessageItemWidgetState extends State<MessageItemWidget> {
                       children: [
                         Expanded(
                           child: Text(
-                            this.widget.message.name,
+                            this.widget.message.name!,
                             overflow: TextOverflow.fade,
                             softWrap: false,
-                            style: Theme.of(context).textTheme.bodyText1.merge(
-                                TextStyle(fontWeight: this.widget.message.readByUsers.contains(currentUser.value.id) ? FontWeight.w400 : FontWeight.w800)),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .merge(TextStyle(
+                                    fontWeight: this
+                                            .widget
+                                            .message
+                                            .readByUsers
+                                            .contains(currentUser.value.id)
+                                        ? FontWeight.w400
+                                        : FontWeight.w800)),
                           ),
                         ),
                         Text(
-                          DateFormat('HH:mm').format(DateTime.fromMillisecondsSinceEpoch(this.widget.message.lastMessageTime, isUtc: true)),
+                          DateFormat('HH:mm').format(
+                              DateTime.fromMillisecondsSinceEpoch(
+                                  this.widget.message.lastMessageTime!,
+                                  isUtc: true)),
                           overflow: TextOverflow.fade,
                           softWrap: false,
-                          style: Theme.of(context).textTheme.bodyText2,
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
                     ),
@@ -120,18 +146,28 @@ class _MessageItemWidgetState extends State<MessageItemWidget> {
                       children: <Widget>[
                         Expanded(
                           child: Text(
-                            this.widget.message.lastMessage,
+                            this.widget.message.lastMessage!,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
-                            style: Theme.of(context).textTheme.caption.merge(
-                                TextStyle(fontWeight: this.widget.message.readByUsers.contains(currentUser.value.id) ? FontWeight.w400 : FontWeight.w800)),
+                            style: Theme.of(context).textTheme.bodySmall!.merge(
+                                TextStyle(
+                                    fontWeight: this
+                                            .widget
+                                            .message
+                                            .readByUsers
+                                            .contains(currentUser.value.id)
+                                        ? FontWeight.w400
+                                        : FontWeight.w800)),
                           ),
                         ),
                         Text(
-                          DateFormat('dd-MM-yyyy').format(DateTime.fromMillisecondsSinceEpoch(this.widget.message.lastMessageTime, isUtc: true)),
+                          DateFormat('dd-MM-yyyy').format(
+                              DateTime.fromMillisecondsSinceEpoch(
+                                  this.widget.message.lastMessageTime!,
+                                  isUtc: true)),
                           overflow: TextOverflow.fade,
                           softWrap: false,
-                          style: Theme.of(context).textTheme.bodyText2,
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],
                     )

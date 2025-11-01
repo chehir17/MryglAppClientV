@@ -11,7 +11,7 @@ import '../models/route_argument.dart';
 class ReviewsWidget extends StatefulWidget {
   RouteArgument routeArgument;
 
-  ReviewsWidget({Key key, this.routeArgument}) : super(key: key);
+  ReviewsWidget({Key? key, required this.routeArgument}) : super(key: key);
 
   @override
   _ReviewsWidgetState createState() {
@@ -20,10 +20,10 @@ class ReviewsWidget extends StatefulWidget {
 }
 
 class _ReviewsWidgetState extends StateMVC<ReviewsWidget> {
-  ReviewsController _con;
+  late ReviewsController _con;
 
   _ReviewsWidgetState() : super(ReviewsController()) {
-    _con = controller;
+    _con = controller as ReviewsController;
   }
 
   @override
@@ -45,55 +45,81 @@ class _ReviewsWidgetState extends StateMVC<ReviewsWidget> {
                       children: <Widget>[
                         Stack(
                           children: <Widget>[
-                            _con.order.productOrders[0].product.unique ?
-                            Stack(
-                              alignment: AlignmentDirectional.bottomCenter,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 30),
-                                  child: SizedBox(
-                                    height: 150,
-                                    width: double.infinity,
-                                    child: Hero(
-                                      tag: widget.routeArgument.heroTag + _con.order.productOrders[0].product.market.id,
-                                      child: CachedNetworkImage(
-                                        fit: BoxFit.cover,
-                                        imageUrl: _con.order.productOrders[0].product.market.image.url,
-                                        placeholder: (context, url) => Image.asset(
-                                          'assets/img/loading.gif',
-                                          fit: BoxFit.cover,
+                            _con.order.productOrders![0].product!.unique
+                                ? Stack(
+                                    alignment:
+                                        AlignmentDirectional.bottomCenter,
+                                    children: <Widget>[
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 30),
+                                        child: SizedBox(
+                                          height: 150,
+                                          width: double.infinity,
+                                          child: Hero(
+                                            tag: widget.routeArgument.heroTag! +
+                                                _con.order.productOrders![0]
+                                                    .product!.market.id!,
+                                            child: CachedNetworkImage(
+                                              fit: BoxFit.cover,
+                                              imageUrl: _con
+                                                  .order
+                                                  .productOrders![0]
+                                                  .product!
+                                                  .market
+                                                  .image!
+                                                  .url!,
+                                              placeholder: (context, url) =>
+                                                  Image.asset(
+                                                'assets/img/loading.gif',
+                                                fit: BoxFit.cover,
+                                              ),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Icon(Icons.error),
+                                            ),
+                                          ),
                                         ),
-                                        errorWidget: (context, url, error) => Icon(Icons.error),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 60,
-                                  width: 110,
-                                  child: Chip(
-                                    padding: EdgeInsets.all(10),
-                                    label: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Text(_con.order.productOrders[0].product.market.rate,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .display2
-                                                .merge(TextStyle(color: Theme.of(context).primaryColor))),
-                                        Icon(
-                                          Icons.star_border,
-                                          color: Theme.of(context).primaryColor,
-                                          size: 30,
+                                      SizedBox(
+                                        height: 60,
+                                        width: 110,
+                                        child: Chip(
+                                          padding: EdgeInsets.all(10),
+                                          label: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              Text(
+                                                  _con.order.productOrders![0]
+                                                      .product!.market.rate!,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .displaySmall!
+                                                      .merge(TextStyle(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .primaryColor))),
+                                              Icon(
+                                                Icons.star_border,
+                                                color: Theme.of(context)
+                                                    .primaryColor,
+                                                size: 30,
+                                              ),
+                                            ],
+                                          ),
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .secondary
+                                              .withOpacity(0.9),
+                                          shape: StadiumBorder(),
                                         ),
-                                      ],
-                                    ),
-                                    backgroundColor: Theme.of(context).accentColor.withOpacity(0.9),
-                                    shape: StadiumBorder(),
+                                      ),
+                                    ],
+                                  )
+                                : SizedBox(
+                                    height: 50,
                                   ),
-                                ),
-                              ],
-                            ):SizedBox(height: 50,),
                             Positioned(
                               top: 30,
                               left: 15,
@@ -112,14 +138,18 @@ class _ReviewsWidgetState extends StateMVC<ReviewsWidget> {
                         SizedBox(height: 10),
                         Container(
                           width: MediaQuery.of(context).size.width,
-                          margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                          padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+                          margin: EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 20),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 30, horizontal: 20),
                           decoration: BoxDecoration(
                               color: Theme.of(context).primaryColor,
                               borderRadius: BorderRadius.circular(10),
                               boxShadow: [
                                 BoxShadow(
-                                    color: Theme.of(context).focusColor.withOpacity(0.15),
+                                    color: Theme.of(context)
+                                        .focusColor
+                                        .withOpacity(0.15),
                                     offset: Offset(0, -2),
                                     blurRadius: 5.0)
                               ]),
@@ -128,8 +158,11 @@ class _ReviewsWidgetState extends StateMVC<ReviewsWidget> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.max,
                             children: <Widget>[
-                              Text(S.of(context).how_would_you_rate_this_market_,
-                                  textAlign: TextAlign.center, style: Theme.of(context).textTheme.subhead),
+                              Text(
+                                  S.of(context).how_would_you_rate_this_market_,
+                                  textAlign: TextAlign.center,
+                                  style:
+                                      Theme.of(context).textTheme.titleSmall),
                               SizedBox(height: 10),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -137,12 +170,19 @@ class _ReviewsWidgetState extends StateMVC<ReviewsWidget> {
                                   return InkWell(
                                     onTap: () {
                                       setState(() {
-                                        _con.marketReview.rate2 = (index + 1).toString();
+                                        _con.marketReview.rate2 =
+                                            (index + 1).toString();
                                       });
                                     },
-                                    child: index < int.parse(_con.marketReview.rate2 == null ? '0' : _con.marketReview.rate2)
-                                        ? Icon(Icons.star, size: 40, color: Color(0xFFFFB24D))
-                                        : Icon(Icons.star_border, size: 40, color: Color(0xFFFFB24D)),
+                                    child: index <
+                                            int.parse(
+                                                _con.marketReview.rate2 == null
+                                                    ? '0'
+                                                    : _con.marketReview.rate2!)
+                                        ? Icon(Icons.star,
+                                            size: 40, color: Color(0xFFFFB24D))
+                                        : Icon(Icons.star_border,
+                                            size: 40, color: Color(0xFFFFB24D)),
                                   );
                                 }),
                               ),
@@ -155,137 +195,211 @@ class _ReviewsWidgetState extends StateMVC<ReviewsWidget> {
                                 textAlign: TextAlign.center,
                                 decoration: InputDecoration(
                                   contentPadding: EdgeInsets.all(12),
-                                  hintText: S.of(context).tell_us_about_this_market_,
-                                  hintStyle: Theme.of(context).textTheme.caption.merge(TextStyle(fontSize: 14)),
+                                  hintText:
+                                      S.of(context).tell_us_about_this_market_,
+                                  hintStyle: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .merge(TextStyle(fontSize: 14)),
                                   border: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.1))),
+                                      borderSide: BorderSide(
+                                          color: Theme.of(context)
+                                              .focusColor
+                                              .withOpacity(0.1))),
                                   focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.2))),
+                                      borderSide: BorderSide(
+                                          color: Theme.of(context)
+                                              .focusColor
+                                              .withOpacity(0.2))),
                                   enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.1))),
+                                      borderSide: BorderSide(
+                                          color: Theme.of(context)
+                                              .focusColor
+                                              .withOpacity(0.1))),
                                 ),
                               ),
                               SizedBox(height: 10),
-                              FlatButton.icon(
-                                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 18),
+                              TextButton.icon(
                                 onPressed: () {
-                                  _con.addMarketReview(_con.marketReview,_con.order.id,app:true); 
+                                  _con.addMarketReview(
+                                      _con.marketReview, _con.order.id,
+                                      app: true);
                                   FocusScope.of(context).unfocus();
                                 },
-                                shape: StadiumBorder(),
-                                label: Text(
-                                  S.of(context).submit,
-                                  style: TextStyle(color: Theme.of(context).primaryColor),
-                                ),
                                 icon: Icon(
                                   Icons.check,
                                   color: Theme.of(context).primaryColor,
                                 ),
-                                textColor: Theme.of(context).primaryColor,
-                                color: Theme.of(context).accentColor,
-                              ),
+                                label: Text(
+                                  S.of(context).submit,
+                                  style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ),
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 18),
+                                  shape: const StadiumBorder(),
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.secondary,
+                                ),
+                              )
                             ],
                           ),
                         ),
-                        _con.order.productOrders[0].product.unique ?
-                        Text(
-                          _con.order.productOrders[0].product.market.name,
-                          overflow: TextOverflow.fade,
-                          softWrap: false,
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.display2,
-                        ):SizedBox(height: 0,),
-                        _con.order.productOrders[0].product.unique ?
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                          padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-                          decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Theme.of(context).focusColor.withOpacity(0.15),
-                                    offset: Offset(0, -2),
-                                    blurRadius: 5.0)
-                              ]),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.max,
-                            children: <Widget>[
-                              Text(S.of(context).how_would_you_rate_this_market,
-                                  textAlign: TextAlign.center, style: Theme.of(context).textTheme.subhead),
-                              SizedBox(height: 10),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: List.generate(5, (index) {
-                                  return InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        _con.marketReview.rate = (index + 1).toString();
-                                      });
-                                    },
-                                    child: index < int.parse(_con.marketReview.rate)
-                                        ? Icon(Icons.star, size: 40, color: Color(0xFFFFB24D))
-                                        : Icon(Icons.star_border, size: 40, color: Color(0xFFFFB24D)),
-                                  );
-                                }),
-                              ),
-                              SizedBox(height: 10),
-                              TextField(
-                                onChanged: (text) {
-                                  _con.marketReview.review = text;
-                                },
+                        _con.order.productOrders![0].product!.unique
+                            ? Text(
+                                _con.order.productOrders![0].product!.market
+                                    .name!,
+                                overflow: TextOverflow.fade,
+                                softWrap: false,
                                 maxLines: 2,
                                 textAlign: TextAlign.center,
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.all(12),
-                                  hintText: S.of(context).tell_us_about_this_market,
-                                  hintStyle: Theme.of(context).textTheme.caption.merge(TextStyle(fontSize: 14)),
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.1))),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.2))),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.1))),
-                                ),
+                                style:
+                                    Theme.of(context).textTheme.displayMedium,
+                              )
+                            : SizedBox(
+                                height: 0,
                               ),
-                              SizedBox(height: 10),
-                              FlatButton.icon(
-                                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 18),
-                                onPressed: () {
-                                  _con.addMarketReview(_con.marketReview,_con.order.id); 
-                                  FocusScope.of(context).unfocus();
-                                },
-                                shape: StadiumBorder(),
-                                label: Text(
-                                  S.of(context).submit,
-                                  style: TextStyle(color: Theme.of(context).primaryColor),
+                        _con.order.productOrders![0].product!.unique
+                            ? Container(
+                                width: MediaQuery.of(context).size.width,
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 20, horizontal: 20),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 30, horizontal: 20),
+                                decoration: BoxDecoration(
+                                    color: Theme.of(context).primaryColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Theme.of(context)
+                                              .focusColor
+                                              .withOpacity(0.15),
+                                          offset: Offset(0, -2),
+                                          blurRadius: 5.0)
+                                    ]),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: <Widget>[
+                                    Text(
+                                        S
+                                            .of(context)
+                                            .how_would_you_rate_this_market,
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall),
+                                    SizedBox(height: 10),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: List.generate(5, (index) {
+                                        return InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              _con.marketReview.rate =
+                                                  (index + 1).toString();
+                                            });
+                                          },
+                                          child: index <
+                                                  int.parse(
+                                                      _con.marketReview.rate!)
+                                              ? Icon(Icons.star,
+                                                  size: 40,
+                                                  color: Color(0xFFFFB24D))
+                                              : Icon(Icons.star_border,
+                                                  size: 40,
+                                                  color: Color(0xFFFFB24D)),
+                                        );
+                                      }),
+                                    ),
+                                    SizedBox(height: 10),
+                                    TextField(
+                                      onChanged: (text) {
+                                        _con.marketReview.review = text;
+                                      },
+                                      maxLines: 2,
+                                      textAlign: TextAlign.center,
+                                      decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.all(12),
+                                        hintText: S
+                                            .of(context)
+                                            .tell_us_about_this_market,
+                                        hintStyle: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall!
+                                            .merge(TextStyle(fontSize: 14)),
+                                        border: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: Theme.of(context)
+                                                    .focusColor
+                                                    .withOpacity(0.1))),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: Theme.of(context)
+                                                    .focusColor
+                                                    .withOpacity(0.2))),
+                                        enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: Theme.of(context)
+                                                    .focusColor
+                                                    .withOpacity(0.1))),
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
+                                    TextButton.icon(
+                                      onPressed: () {
+                                        _con.addMarketReview(
+                                            _con.marketReview, _con.order.id);
+                                        FocusScope.of(context).unfocus();
+                                      },
+                                      icon: Icon(
+                                        Icons.check,
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                      label: Text(
+                                        S.of(context).submit,
+                                        style: TextStyle(
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                      ),
+                                      style: TextButton.styleFrom(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 18),
+                                        shape: const StadiumBorder(),
+                                        backgroundColor: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                        foregroundColor: Theme.of(context)
+                                            .primaryColor, // replaces textColor
+                                      ),
+                                    )
+                                  ],
                                 ),
-                                icon: Icon(
-                                  Icons.check,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                textColor: Theme.of(context).primaryColor,
-                                color: Theme.of(context).accentColor,
+                              )
+                            : SizedBox(
+                                height: 0,
                               ),
-                            ],
-                          ),
-                        ):SizedBox(height: 0,),
                         Column(
-                          children: List.generate(_con.productsOfOrder.length, (index) {
+                          children: List.generate(_con.productsOfOrder.length,
+                              (index) {
                             return Container(
                               width: MediaQuery.of(context).size.width,
-                              margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                              padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 20, horizontal: 20),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 30, horizontal: 20),
                               decoration: BoxDecoration(
                                   color: Theme.of(context).primaryColor,
                                   borderRadius: BorderRadius.circular(10),
                                   boxShadow: [
                                     BoxShadow(
-                                        color: Theme.of(context).focusColor.withOpacity(0.15),
+                                        color: Theme.of(context)
+                                            .focusColor
+                                            .withOpacity(0.15),
                                         offset: Offset(0, -2),
                                         blurRadius: 5.0)
                                   ]),
@@ -295,7 +409,10 @@ class _ReviewsWidgetState extends StateMVC<ReviewsWidget> {
                                 mainAxisSize: MainAxisSize.max,
                                 children: <Widget>[
                                   Text(_con.productsOfOrder[index].name,
-                                      textAlign: TextAlign.center, style: Theme.of(context).textTheme.subhead),
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall),
                                   SizedBox(height: 10),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -303,12 +420,20 @@ class _ReviewsWidgetState extends StateMVC<ReviewsWidget> {
                                       return InkWell(
                                         onTap: () {
                                           setState(() {
-                                            _con.productsReviews[index].rate = (star + 1).toString();
+                                            _con.productsReviews[index].rate =
+                                                (star + 1).toString();
                                           });
                                         },
-                                        child: star < int.parse(_con.productsReviews[index].rate)
-                                            ? Icon(Icons.star, size: 40, color: Color(0xFFFFB24D))
-                                            : Icon(Icons.star_border, size: 40, color: Color(0xFFFFB24D)),
+                                        child: star <
+                                                int.parse(_con
+                                                    .productsReviews[index]
+                                                    .rate!)
+                                            ? Icon(Icons.star,
+                                                size: 40,
+                                                color: Color(0xFFFFB24D))
+                                            : Icon(Icons.star_border,
+                                                size: 40,
+                                                color: Color(0xFFFFB24D)),
                                       );
                                     }),
                                   ),
@@ -321,36 +446,61 @@ class _ReviewsWidgetState extends StateMVC<ReviewsWidget> {
                                     textAlign: TextAlign.center,
                                     decoration: InputDecoration(
                                       contentPadding: EdgeInsets.all(12),
-                                      hintText: S.of(context).tell_us_about_this_product,
-                                      hintStyle: Theme.of(context).textTheme.caption.merge(TextStyle(fontSize: 14)),
+                                      hintText: S
+                                          .of(context)
+                                          .tell_us_about_this_product,
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .merge(TextStyle(fontSize: 14)),
                                       border: OutlineInputBorder(
-                                          borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.1))),
+                                          borderSide: BorderSide(
+                                              color: Theme.of(context)
+                                                  .focusColor
+                                                  .withOpacity(0.1))),
                                       focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.2))),
+                                          borderSide: BorderSide(
+                                              color: Theme.of(context)
+                                                  .focusColor
+                                                  .withOpacity(0.2))),
                                       enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.1))),
+                                          borderSide: BorderSide(
+                                              color: Theme.of(context)
+                                                  .focusColor
+                                                  .withOpacity(0.1))),
                                     ),
                                   ),
                                   SizedBox(height: 10),
-                                  FlatButton.icon(
-                                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 18),
+                                  TextButton.icon(
                                     onPressed: () {
-                                      _con.addProductReview(_con.productsReviews[index], _con.productsOfOrder[index]);
+                                      _con.addProductReview(
+                                        _con.productsReviews[index],
+                                        _con.productsOfOrder[index],
+                                      );
                                       FocusScope.of(context).unfocus();
                                       // if(_con.productsReviews.length == index+1) Navigator.of(context).pop();
                                     },
-                                    shape: StadiumBorder(),
-                                    label: Text(
-                                      S.of(context).submit,
-                                      style: TextStyle(color: Theme.of(context).primaryColor),
-                                    ),
                                     icon: Icon(
                                       Icons.check,
                                       color: Theme.of(context).primaryColor,
                                     ),
-                                    textColor: Theme.of(context).primaryColor,
-                                    color: Theme.of(context).accentColor,
-                                  ),
+                                    label: Text(
+                                      S.of(context).submit,
+                                      style: TextStyle(
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
+                                    style: TextButton.styleFrom(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 18),
+                                      shape: const StadiumBorder(),
+                                      backgroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                      foregroundColor: Theme.of(context)
+                                          .primaryColor, // replaces textColor
+                                    ),
+                                  )
                                 ],
                               ),
                             );
@@ -359,7 +509,6 @@ class _ReviewsWidgetState extends StateMVC<ReviewsWidget> {
                         SizedBox(height: 20),
                       ],
                     ),
-                  )
-                  ));
+                  )));
   }
 }

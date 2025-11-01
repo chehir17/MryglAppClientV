@@ -12,10 +12,10 @@ class ForgetPasswordWidget extends StatefulWidget {
 }
 
 class _ForgetPasswordWidgetState extends StateMVC<ForgetPasswordWidget> {
-  UserController _con;
+  late UserController _con;
 
   _ForgetPasswordWidgetState() : super(UserController()) {
-    _con = controller;
+    _con = controller as UserController;
   }
   @override
   void initState() {
@@ -37,7 +37,8 @@ class _ForgetPasswordWidgetState extends StateMVC<ForgetPasswordWidget> {
               child: Container(
                 width: config.App(context).appWidth(100),
                 height: config.App(context).appHeight(37),
-                decoration: BoxDecoration(color: Theme.of(context).accentColor),
+                decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondary),
               ),
             ),
             Positioned(
@@ -49,7 +50,7 @@ class _ForgetPasswordWidgetState extends StateMVC<ForgetPasswordWidget> {
                   S.of(context).email_to_reset_password,
                   style: Theme.of(context)
                       .textTheme
-                      .display3
+                      .displayMedium!
                       .merge(TextStyle(color: Theme.of(context).primaryColor)),
                 ),
               ),
@@ -81,13 +82,13 @@ class _ForgetPasswordWidgetState extends StateMVC<ForgetPasswordWidget> {
                       TextFormField(
                         keyboardType: TextInputType.emailAddress,
                         onSaved: (input) => _con.user.email = input,
-                        validator: (input) => !input.contains('@')
+                        validator: (input) => !input!.contains('@')
                             ? S.of(context).should_be_a_valid_email
                             : null,
                         decoration: InputDecoration(
                           labelText: S.of(context).email,
-                          labelStyle:
-                              TextStyle(color: Theme.of(context).accentColor),
+                          labelStyle: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary),
                           contentPadding: EdgeInsets.all(12),
                           hintText: 'johndoe@gmail.com',
                           hintStyle: TextStyle(
@@ -95,7 +96,7 @@ class _ForgetPasswordWidgetState extends StateMVC<ForgetPasswordWidget> {
                                   .focusColor
                                   .withOpacity(0.7)),
                           prefixIcon: Icon(Icons.alternate_email,
-                              color: Theme.of(context).accentColor),
+                              color: Theme.of(context).colorScheme.secondary),
                           border: OutlineInputBorder(
                               borderSide: BorderSide(
                                   color: Theme.of(context)
@@ -120,7 +121,7 @@ class _ForgetPasswordWidgetState extends StateMVC<ForgetPasswordWidget> {
                           style:
                               TextStyle(color: Theme.of(context).primaryColor),
                         ),
-                        color: Theme.of(context).accentColor,
+                        color: Theme.of(context).colorScheme.secondary,
                         onPressed: () {
                           _con.resetPassword();
                         },
@@ -134,19 +135,23 @@ class _ForgetPasswordWidgetState extends StateMVC<ForgetPasswordWidget> {
               bottom: 10,
               child: Column(
                 children: <Widget>[
-                  FlatButton(
+                  ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pushReplacementNamed('/Login');
                     },
-                    textColor: Theme.of(context).hintColor,
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Theme.of(context).hintColor,
+                    ),
                     child: Text(
                         S.of(context).i_remember_my_password_return_to_login),
                   ),
-                  FlatButton(
+                  ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pushReplacementNamed('/SignUp');
                     },
-                    textColor: Theme.of(context).hintColor,
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Theme.of(context).hintColor,
+                    ),
                     child: Text(S.of(context).i_dont_have_an_account),
                   ),
                 ],

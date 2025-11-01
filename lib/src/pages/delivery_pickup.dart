@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_map_location_picker/google_map_location_picker.dart';
+import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:markets/src/elements/DeliveryAddressBottomSheetWidget.dart';
 import 'package:markets/src/repository/settings_repository.dart';
@@ -21,23 +21,24 @@ import '../models/route_argument.dart';
 class DeliveryPickupWidget extends StatefulWidget {
   RouteArgument routeArgument;
 
-  DeliveryPickupWidget({Key key, this.routeArgument}) : super(key: key);
+  DeliveryPickupWidget({Key? key, required this.routeArgument})
+      : super(key: key);
 
   @override
   _DeliveryPickupWidgetState createState() => _DeliveryPickupWidgetState();
 }
 
 class _DeliveryPickupWidgetState extends StateMVC<DeliveryPickupWidget> {
-  DeliveryPickupController _con;
-  PaymentMethodList list;
+  late DeliveryPickupController _con;
+  late PaymentMethodList list;
 
   _DeliveryPickupWidgetState() : super(DeliveryPickupController()) {
-    _con = controller;
+    _con = controller as DeliveryPickupController;
   }
 
   @override
   void initState() {
-    list = new PaymentMethodList();
+    list = PaymentMethodList();
     super.initState();
   }
 
@@ -50,61 +51,48 @@ class _DeliveryPickupWidgetState extends StateMVC<DeliveryPickupWidget> {
           if (currentUser.value.apiToken == null) {
             //_con.requestForCurrentLocation(context);
           } else {
-            LocationResult result = await showLocationPicker(
-              context,
-              setting.value.googleMapsKey,
-              initialCenter: LatLng(deliveryAddress.value?.latitude ?? 0,
-                  deliveryAddress.value?.longitude ?? 0),
-              //automaticallyAnimateToCurrentLocation: true,
-              //mapStylePath: 'assets/mapStyle.json',
-              myLocationButtonEnabled: true,
-              //resultCardAlignment: Alignment.bottomCenter,
+            // ✅ Utilisation du package google_maps_place_picker_mb
+            final result = await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => PlacePicker(
+                  apiKey: setting.value.googleMapsKey!, // clé obligatoire
+                  initialPosition: LatLng(
+                    deliveryAddress.value?.latitude ??
+                        36.8065, // position par défaut : Tunis
+                    deliveryAddress.value?.longitude ?? 10.1815,
+                  ),
+                  useCurrentLocation: true,
+                  selectInitialPosition: true,
+                ),
+              ),
             );
 
-            // if(widget.disableLocation==true)
-            if (![null, 'null'].contains(result?.address)) {
-              Address address = Address();
-              address.address = result.address;
-              address.latitude = result.latLng.latitude;
-              address.longitude = result.latLng.longitude;
-              DeliveryAddressDialog(
-                context: context,
-                address: address,
-                onChanged: (Address _address) async {
-                  _con.addAddressFromDelivery(_address);
-                  // Navigator.of(context).pushNamed('/PaymentMethod');
-                },
-              );
+            // ✅ Vérifier le résultat du picker
+            if (result != null && result is PickResult) {
+              final addressText =
+                  result.formattedAddress ?? result.name ?? 'Adresse inconnue';
+              final lat = result.geometry?.location.lat ?? 0;
+              final lng = result.geometry?.location.lng ?? 0;
+
+              if (addressText.isNotEmpty) {
+                Address address = Address.empty();
+                address.address = addressText;
+                address.latitude = lat;
+                address.longitude = lng;
+
+                DeliveryAddressDialog(
+                  context: context,
+                  address: address,
+                  onChanged: (Address _address) async {
+                    _con.addAddressFromDelivery(_address);
+                  },
+                );
+              }
             }
-            // _con.addAddress(new Address.fromJSON({
-            //   'address': result.address,
-            //   'latitude': result.latLng.latitude,
-            //   'longitude': result.latLng.longitude,
-            //   // 'is_default':true,
-            //   // 'description':'#id-${result.latLng.latitude.toStringAsFixed(3)}'
-            // }));
-            // else
-            //   _con.addAddress(new Address.fromJSON({
-            //     'address': result.address,
-            //     'latitude': result.latLng.latitude,
-            //     'longitude': result.latLng.longitude,
-            //   }));
-            // var bottomSheetController = _con.scaffoldKey.currentState.showBottomSheet(
-            //   (context) => DeliveryAddressBottomSheetWidget(scaffoldKey: _con.scaffoldKey,disableLocation: true,),
-            //   shape: RoundedRectangleBorder(
-            //     borderRadius: new BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-            //   ),
-            // );
-            // bottomSheetController.closed.then((value) {
-            //   // _con.refreshHome();
-            //   _con.listenForAddresses();
-            // });
           }
         },
-        child: Icon(
-          Icons.my_location,
-          color: Colors.white,
-        ),
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        child: const Icon(Icons.my_location, color: Colors.white),
       ),
       key: _con.scaffoldKey,
       appBar: AppBar(
@@ -115,164 +103,96 @@ class _DeliveryPickupWidgetState extends StateMVC<DeliveryPickupWidget> {
           S.of(context).delivery_or_pickup,
           style: Theme.of(context)
               .textTheme
-              .title
-              .merge(TextStyle(letterSpacing: 1.3)),
+              .titleMedium!
+              .merge(const TextStyle(letterSpacing: 1.3)),
         ),
         actions: <Widget>[
-          new ShoppingCartButtonWidget(
-              iconColor: Theme.of(context).hintColor,
-              labelColor: Theme.of(context).accentColor),
+          ShoppingCartButtonWidget(
+            iconColor: Theme.of(context).hintColor,
+            labelColor: Theme.of(context).colorScheme.secondary,
+          ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            // Padding(
-            //   padding: const EdgeInsets.only(left: 20, right: 10),
-            //   child: ListTile(
-            //     contentPadding: EdgeInsets.symmetric(vertical: 0),
-            //     leading: Icon(
-            //       Icons.domain,
-            //       color: Theme.of(context).hintColor,
-            //     ),
-            //     title: Text(
-            //       S.of(context).pickup,
-            //       maxLines: 1,
-            //       overflow: TextOverflow.ellipsis,
-            //       style: Theme.of(context).textTheme.display1,
-            //     ),
-            //     subtitle: Text(
-            //       S.of(context).pickup_your_product_from_the_market,
-            //       maxLines: 1,
-            //       overflow: TextOverflow.ellipsis,
-            //       style: Theme.of(context).textTheme.caption,
-            //     ),
-            //   ),
-            // ),
-            // ListView.separated(
-            //   scrollDirection: Axis.vertical,
-            //   shrinkWrap: true,
-            //   primary: false,
-            //   itemCount: list.pickupList.length,
-            //   separatorBuilder: (context, index) {
-            //     return SizedBox(height: 10);
-            //   },
-            //   itemBuilder: (context, index) {
-            //     //return PaymentMethodListItemWidget(paymentMethod: list.pickupList.elementAt(index));
-            //   },
-            // ),
-            // _con.carts.isNotEmpty //&& Helper.canDelivery(_con.carts[0].product.market, carts: _con.carts)
-            //     ?
-            Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 20, left: 20, right: 10),
-                  child: ListTile(
-                    contentPadding: EdgeInsets.symmetric(vertical: 0),
-                    leading: Icon(
-                      Icons.map,
-                      color: Theme.of(context).hintColor,
-                    ),
-                    title: Text(
-                      S.of(context).delivery_address,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.display1,
-                    ),
-                    subtitle: Text(
-                      S.of(context).confirm_your_delivery_address,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.caption,
-                    ),
-                  ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20, left: 20, right: 10),
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                leading: Icon(
+                  Icons.map,
+                  color: Theme.of(context).hintColor,
                 ),
-                ListView.separated(
-                  padding: EdgeInsets.symmetric(vertical: 25),
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  primary: false,
-                  itemCount: _con.addresses.length,
-                  separatorBuilder: (context, index) {
-                    return SizedBox(height: 10);
+                title: Text(
+                  S.of(context).delivery_address,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                subtitle: Text(
+                  S.of(context).confirm_your_delivery_address,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            ),
+            ListView.separated(
+              padding: const EdgeInsets.symmetric(vertical: 25),
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              primary: false,
+              itemCount: _con.addresses.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 10),
+              itemBuilder: (context, index) {
+                return DeliveryAddressesItemWidget(
+                  address: _con.addresses[index],
+                  onDismissed: (Address _address) {
+                    _con.removeDeliveryAddress(_address);
                   },
-                  itemBuilder: (context, index) {
-                    return DeliveryAddressesItemWidget(
-                      address: _con.addresses[index],
-                      onPressed: (Address _address) async {
-                        print(_address.toMap());
-                        deliveryAddress.value = _address;
-                        SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        await prefs.setString('select_address_id', _address.id);
-                        if (_con.addresses[index].id == null ||
-                            _con.addresses[index].id == 'null') {
-                          DeliveryAddressDialog(
-                            context: context,
-                            address: _address,
-                            onChanged: (Address _address) {
-                              _con.addAddress(_address);
-                            },
-                          );
-                        } else if (['null', null]
-                            .contains(_con.addresses[index].description)) {
-                          DeliveryAddressDialog(
-                            context: context,
-                            address: _address,
-                            onChanged: (Address _address) {
-                              _con.updateAddress(_address);
-                            },
-                          );
-                        } else
-                          // Navigator.of(context).pushNamed('/PaymentMethod');
-                          Navigator.pop(context);
-                      },
-                      onLongPress: (Address _address) {
-                        DeliveryAddressDialog(
-                          context: context,
-                          address: _address,
-                          onChanged: (Address _address) {
-                            _con.updateAddress(_address);
-                          },
-                        );
+                  onPressed: (Address _address) async {
+                    print(_address.toMap());
+                    deliveryAddress.value = _address;
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    await prefs.setString('select_address_id', _address.id!);
+                    if (_con.addresses[index].id == null ||
+                        _con.addresses[index].id == 'null') {
+                      DeliveryAddressDialog(
+                        context: context,
+                        address: _address,
+                        onChanged: (Address _address) {
+                          _con.addAddress(_address);
+                        },
+                      );
+                    } else if (['null', null]
+                        .contains(_con.addresses[index].description)) {
+                      DeliveryAddressDialog(
+                        context: context,
+                        address: _address,
+                        onChanged: (Address _address) {
+                          _con.updateAddress(_address);
+                        },
+                      );
+                    } else {
+                      Navigator.pop(context);
+                    }
+                  },
+                  onLongPress: (Address _address) {
+                    DeliveryAddressDialog(
+                      context: context,
+                      address: _address,
+                      onChanged: (Address _address) {
+                        _con.updateAddress(_address);
                       },
                     );
                   },
-                ),
-                // DeliveryAddressesItemWidget(
-                //   address: _con.deliveryAddress,
-                //   onPressed: (Address _address) {
-                //     if (_con.deliveryAddress.id == null || _con.deliveryAddress.id == 'null') {
-                //       DeliveryAddressDialog(
-                //         context: context,
-                //         address: _address,
-                //         onChanged: (Address _address) {
-                //           _con.addAddress(_address);
-                //         },
-                //       );
-                //     } else {
-                //       Navigator.of(context).pushNamed('/PaymentMethod');
-                //     }
-                //   },
-                //   onLongPress: (Address _address) {
-                //     DeliveryAddressDialog(
-                //       context: context,
-                //       address: _address,
-                //       onChanged: (Address _address) {
-                //         _con.updateAddress(_address);
-                //       },
-                //     );
-                //   },
-                // )
-              ],
-            )
-            // : SizedBox(
-            //     height: 0,
-            //   ),
+                );
+              },
+            ),
           ],
         ),
       ),

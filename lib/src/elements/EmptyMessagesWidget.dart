@@ -7,7 +7,7 @@ import '../helpers/app_config.dart' as config;
 
 class EmptyMessagesWidget extends StatefulWidget {
   EmptyMessagesWidget({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -38,7 +38,7 @@ class _EmptyMessagesWidgetState extends State<EmptyMessagesWidget> {
                 height: 3,
                 child: LinearProgressIndicator(
                   backgroundColor:
-                      Theme.of(context).accentColor.withOpacity(0.2),
+                      Theme.of(context).colorScheme.secondary.withOpacity(0.2),
                 ),
               )
             : SizedBox(),
@@ -57,23 +57,28 @@ class _EmptyMessagesWidgetState extends State<EmptyMessagesWidget> {
                   textAlign: TextAlign.center,
                   style: Theme.of(context)
                       .textTheme
-                      .headline3
+                      .headlineLarge!
                       .merge(TextStyle(fontWeight: FontWeight.w300)),
                 ),
               ),
               SizedBox(height: 20),
               !loading
-                  ? FlatButton(
+                  ? ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).pushNamed('/Pages', arguments: 2);
                       },
-                      padding:
-                          EdgeInsets.symmetric(vertical: 12, horizontal: 30),
-                      color: Theme.of(context).accentColor.withOpacity(1),
-                      shape: StadiumBorder(),
+                      style: ElevatedButton.styleFrom(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 30),
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(1),
+                        shape: StadiumBorder(),
+                      ),
                       child: Text(
                         S.of(context).start_exploring,
-                        style: Theme.of(context).textTheme.headline6.merge(
+                        style: Theme.of(context).textTheme.titleLarge!.merge(
                             TextStyle(
                                 color:
                                     Theme.of(context).scaffoldBackgroundColor)),

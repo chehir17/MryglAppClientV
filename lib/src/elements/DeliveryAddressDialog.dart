@@ -11,7 +11,8 @@ class DeliveryAddressDialog {
   ValueChanged<Address> onChanged;
   GlobalKey<FormState> _deliveryAddressFormKey = new GlobalKey<FormState>();
 
-  DeliveryAddressDialog({this.context, this.address, this.onChanged}) {
+  DeliveryAddressDialog(
+      {required this.context, required this.address, required this.onChanged}) {
     showDialog(
         context: context,
         builder: (context) {
@@ -27,7 +28,7 @@ class DeliveryAddressDialog {
                 SizedBox(width: 10),
                 Text(
                   S.of(context).add_delivery_address,
-                  style: Theme.of(context).textTheme.body2,
+                  style: Theme.of(context).textTheme.bodyMedium,
                 )
               ],
             ),
@@ -42,9 +43,14 @@ class DeliveryAddressDialog {
                         style: TextStyle(color: Theme.of(context).hintColor),
                         keyboardType: TextInputType.text,
                         decoration: getInputDecoration(
-                            hintText: S.of(context).home_address, labelText: S.of(context).description),
-                        initialValue: address.description?.isNotEmpty ?? false ? address.description : null,
-                        validator: (input) => input.trim().length == 0 ? 'Not valid address description' : null,
+                            hintText: S.of(context).home_address,
+                            labelText: S.of(context).description),
+                        initialValue: address.description?.isNotEmpty ?? false
+                            ? address.description
+                            : null,
+                        validator: (input) => input!.trim().length == 0
+                            ? 'Not valid address description'
+                            : null,
                         onSaved: (input) => address.description = input,
                       ),
                     ),
@@ -54,9 +60,14 @@ class DeliveryAddressDialog {
                         style: TextStyle(color: Theme.of(context).hintColor),
                         keyboardType: TextInputType.text,
                         decoration: getInputDecoration(
-                            hintText: S.of(context).hint_full_address, labelText: S.of(context).full_address),
-                        initialValue: address.address?.isNotEmpty ?? false ? address.address : null,
-                        validator: (input) => input.trim().length == 0 ? 'Not valid address' : null,
+                            hintText: S.of(context).hint_full_address,
+                            labelText: S.of(context).full_address),
+                        initialValue: address.address?.isNotEmpty ?? false
+                            ? address.address
+                            : null,
+                        validator: (input) => input!.trim().length == 0
+                            ? 'Not valid address'
+                            : null,
                         onSaved: (input) => address.address = input,
                       ),
                     ),
@@ -87,7 +98,8 @@ class DeliveryAddressDialog {
                     onPressed: _submit,
                     child: Text(
                       S.of(context).save,
-                      style: TextStyle(color: Theme.of(context).accentColor),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary),
                     ),
                   ),
                 ],
@@ -99,25 +111,29 @@ class DeliveryAddressDialog {
         });
   }
 
-  InputDecoration getInputDecoration({String hintText, String labelText}) {
+  InputDecoration getInputDecoration({String? hintText, String? labelText}) {
     return new InputDecoration(
       hintText: hintText,
       labelText: labelText,
-      hintStyle: Theme.of(context).textTheme.body1.merge(
+      hintStyle: Theme.of(context).textTheme.bodyMedium!.merge(
             TextStyle(color: Theme.of(context).focusColor),
           ),
-      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Theme.of(context).hintColor.withOpacity(0.2))),
-      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Theme.of(context).hintColor)),
-      hasFloatingPlaceholder: true,
-      labelStyle: Theme.of(context).textTheme.body1.merge(
+      enabledBorder: UnderlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).hintColor.withOpacity(0.2))),
+      focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Theme.of(context).hintColor)),
+      floatingLabelBehavior: FloatingLabelBehavior.auto,
+      // hasFloatingPlaceholder: true,
+      labelStyle: Theme.of(context).textTheme.bodyMedium!.merge(
             TextStyle(color: Theme.of(context).hintColor),
           ),
     );
   }
 
   void _submit() {
-    if (_deliveryAddressFormKey.currentState.validate()) {
-      _deliveryAddressFormKey.currentState.save();
+    if (_deliveryAddressFormKey.currentState!.validate()) {
+      _deliveryAddressFormKey.currentState!.save();
       onChanged(address);
       Navigator.pop(context);
     }

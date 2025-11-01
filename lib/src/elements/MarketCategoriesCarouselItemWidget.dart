@@ -11,13 +11,16 @@ class MarketCategoriesCarouselItemWidget extends StatelessWidget {
   Category category;
   String marketId;
   MarketCategoriesCarouselItemWidget(
-      {Key key, this.marginLeft, this.category, this.marketId})
+      {Key? key,
+      required this.marginLeft,
+      required this.category,
+      required this.marketId})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      splashColor: Theme.of(context).accentColor.withOpacity(0.08),
+      splashColor: Theme.of(context).colorScheme.secondary.withOpacity(0.08),
       highlightColor: Colors.transparent,
       onTap: () {
         Navigator.of(context).pushNamed('/MarketCategory',
@@ -31,7 +34,7 @@ class MarketCategoriesCarouselItemWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Hero(
-            tag: category.id,
+            tag: category.id!,
             child: Container(
               margin:
                   EdgeInsetsDirectional.only(start: this.marginLeft, end: 5),
@@ -49,13 +52,13 @@ class MarketCategoriesCarouselItemWidget extends StatelessWidget {
               child: Padding(
                   padding: const EdgeInsets.all(10),
                   child: CachedNetworkImage(
-                    imageUrl: category.image.url,
+                    imageUrl: category.image!.url!,
                     fit: BoxFit.fill,
                   )
                   // category.image.url.toString().split(".").contains("svg")
                   // ? SvgPicture.network(
                   //     category.image.url,
-                  //     color: Theme.of(context).accentColor,
+                  //     color: Theme.of(context).colorScheme.secondary,
                   //   )
                   // : Image.network(category.image.url),
                   ),
@@ -65,10 +68,10 @@ class MarketCategoriesCarouselItemWidget extends StatelessWidget {
           Container(
             child: Flexible(
               child: Text(
-                category.name,
+                category.name!,
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.body1.merge(
+                style: Theme.of(context).textTheme.bodyMedium!.merge(
                     TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
               ),
             ),

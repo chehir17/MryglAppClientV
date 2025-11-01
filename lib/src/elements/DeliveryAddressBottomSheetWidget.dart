@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:google_map_location_picker/google_map_location_picker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../../generated/i18n.dart';
 import '../controllers/delivery_addresses_controller.dart';
@@ -15,7 +15,7 @@ class DeliveryAddressBottomSheetWidget extends StatefulWidget {
   final bool disableLocation;
 
   DeliveryAddressBottomSheetWidget(
-      {Key? key, this.scaffoldKey, this.disableLocation = false})
+      {Key? key, required this.scaffoldKey, this.disableLocation = false})
       : super(key: key);
 
   @override
@@ -25,11 +25,11 @@ class DeliveryAddressBottomSheetWidget extends StatefulWidget {
 
 class _DeliveryAddressBottomSheetWidgetState
     extends StateMVC<DeliveryAddressBottomSheetWidget> {
-  DeliveryAddressesController _con;
+  late DeliveryAddressesController _con;
 
   _DeliveryAddressBottomSheetWidgetState()
       : super(DeliveryAddressesController()) {
-    _con = controller;
+    _con = controller as DeliveryAddressesController;
   }
 
   @override
@@ -57,34 +57,52 @@ class _DeliveryAddressBottomSheetWidgetState
               children: <Widget>[
                 InkWell(
                   onTap: () async {
-                    LocationResult result = await showLocationPicker(
-                      context,
-                      setting.value.googleMapsKey,
-                      initialCenter: LatLng(
-                          deliveryAddress.value?.latitude ?? 0,
-                          deliveryAddress.value?.longitude ?? 0),
-                      //automaticallyAnimateToCurrentLocation: true,
-                      //mapStylePath: 'assets/mapStyle.json',
-                      myLocationButtonEnabled: true,
-                      //resultCardAlignment: Alignment.bottomCenter,
-                    );
+                    try {
+                      // Get current location first
+                      Position position = await Geolocator.getCurrentPosition(
+                          desiredAccuracy: LocationAccuracy.high);
 
-                    if (widget.disableLocation == true)
-                      _con.addAddress(new Address.fromJSON({
-                        'address': result.address,
-                        'latitude': result.latLng.latitude,
-                        'longitude': result.latLng.longitude,
-                        // 'is_default':true,
-                        // 'description':'#id-${result.latLng.latitude.toStringAsFixed(3)}'
+                      LatLng selectedLocation = LatLng(
+                          deliveryAddress.value?.latitude ?? position.latitude,
+                          deliveryAddress.value?.longitude ??
+                              position.longitude);
+
+                      // Open a simple map dialog for the user to tap and select location
+                      await showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text(S.of(context).current_location),
+                          content: SizedBox(
+                            width: double.maxFinite,
+                            height: 400,
+                            child: GoogleMap(
+                              initialCameraPosition: CameraPosition(
+                                target: selectedLocation,
+                                zoom: 15,
+                              ),
+                              myLocationEnabled: true,
+                              myLocationButtonEnabled: true,
+                              onTap: (latLng) {
+                                selectedLocation = latLng;
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ),
+                        ),
+                      );
+
+                      // Add the selected address
+                      _con.addAddress(Address.fromJSON({
+                        'address':
+                            "Selected location", // optional: reverse geocode for real address
+                        'latitude': selectedLocation.latitude,
+                        'longitude': selectedLocation.longitude,
                       }));
-                    else
-                      _con.addAddress(new Address.fromJSON({
-                        'address': result.address,
-                        'latitude': result.latLng.latitude,
-                        'longitude': result.latLng.longitude,
-                      }));
-                    print("result = $result");
-                    // Navigator.of(widget.scaffoldKey.currentContext).pop();
+
+                      print("Selected location: $selectedLocation");
+                    } catch (e) {
+                      print("Error picking location: $e");
+                    }
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -114,7 +132,8 @@ class _DeliveryAddressBottomSheetWidgetState
                                     S.of(context).add_new_delivery_address,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 2,
-                                    style: Theme.of(context).textTheme.body1,
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
                                   ),
                                 ],
                               ),
@@ -139,7 +158,7 @@ class _DeliveryAddressBottomSheetWidgetState
                           _con
                               .changeDeliveryAddressToCurrentLocation()
                               .then((value) {
-                            Navigator.of(widget.scaffoldKey.currentContext)
+                            Navigator.of(widget.scaffoldKey.currentContext!)
                                 .pop();
                           });
                         },
@@ -152,7 +171,8 @@ class _DeliveryAddressBottomSheetWidgetState
                               decoration: BoxDecoration(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(5)),
-                                  color: Theme.of(context).accentColor),
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
                               child: Icon(
                                 Icons.my_location,
                                 color: Theme.of(context).primaryColor,
@@ -173,8 +193,9 @@ class _DeliveryAddressBottomSheetWidgetState
                                           S.of(context).current_location,
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 2,
-                                          style:
-                                              Theme.of(context).textTheme.body1,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium,
                                         ),
                                       ],
                                     ),
@@ -227,7 +248,8 @@ class _DeliveryAddressBottomSheetWidgetState
                             .changeDeliveryAddress(
                                 _con.addresses.elementAt(index))
                             .then((value) {
-                          Navigator.of(widget.scaffoldKey.currentContext).pop();
+                          Navigator.of(widget.scaffoldKey.currentContext!)
+                              .pop();
                         });
                       },
                       child: Row(
@@ -257,11 +279,14 @@ class _DeliveryAddressBottomSheetWidgetState
                                         CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
-                                        _con.addresses.elementAt(index).address,
+                                        _con.addresses
+                                            .elementAt(index)
+                                            .address!,
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 3,
-                                        style:
-                                            Theme.of(context).textTheme.body1,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
                                       ),
                                     ],
                                   ),

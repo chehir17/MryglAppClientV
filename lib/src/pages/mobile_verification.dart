@@ -22,13 +22,13 @@ class MobileVerification extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Verify Phone ',
-                    style: Theme.of(context).textTheme.headline,
+                    style: Theme.of(context).textTheme.headlineMedium,
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 10),
                   Text(
                     'Your phone and address book are used to connect. Call you to verify your phone Number',
-                    style: Theme.of(context).textTheme.body1,
+                    style: Theme.of(context).textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -39,7 +39,8 @@ class MobileVerification extends StatelessWidget {
               child: Container(
                 decoration: ShapeDecoration(
                   shape: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.2)),
+                    borderSide: BorderSide(
+                        color: Theme.of(context).focusColor.withOpacity(0.2)),
                   ),
                 ),
                 child: DropdownButton(
@@ -51,14 +52,16 @@ class MobileVerification extends StatelessWidget {
                       value: '+213',
                       child: SizedBox(
                         width: _ac.appWidth(70), // for example
-                        child: Text('(+213) - Algeria', textAlign: TextAlign.center),
+                        child: Text('(+213) - Algeria',
+                            textAlign: TextAlign.center),
                       ),
                     ),
                     DropdownMenuItem(
                       value: '+216',
                       child: SizedBox(
                         width: _ac.appWidth(70), // for example
-                        child: Text('(+216) - Tunisia', textAlign: TextAlign.center),
+                        child: Text('(+216) - Tunisia',
+                            textAlign: TextAlign.center),
                       ),
                     ),
                   ],
@@ -70,7 +73,8 @@ class MobileVerification extends StatelessWidget {
               textAlign: TextAlign.center,
               decoration: new InputDecoration(
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Theme.of(context).focusColor.withOpacity(0.2)),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).focusColor.withOpacity(0.2)),
                 ),
                 focusedBorder: new UnderlineInputBorder(
                   borderSide: new BorderSide(
@@ -85,9 +89,12 @@ class MobileVerification extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pushNamed('/MobileVerification2');
               },
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).colorScheme.secondary,
               text: Text(S.of(context).submit.toUpperCase(),
-                  style: Theme.of(context).textTheme.title.merge(TextStyle(color: Theme.of(context).primaryColor))),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .merge(TextStyle(color: Theme.of(context).primaryColor))),
             ),
           ],
         ),

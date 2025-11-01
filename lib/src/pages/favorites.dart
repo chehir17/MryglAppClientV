@@ -14,7 +14,8 @@ import '../repository/user_repository.dart';
 class FavoritesWidget extends StatefulWidget {
   final GlobalKey<ScaffoldState> parentScaffoldKey;
 
-  FavoritesWidget({Key key, this.parentScaffoldKey}) : super(key: key);
+  FavoritesWidget({Key? key, required this.parentScaffoldKey})
+      : super(key: key);
 
   @override
   _FavoritesWidgetState createState() => _FavoritesWidgetState();
@@ -23,10 +24,10 @@ class FavoritesWidget extends StatefulWidget {
 class _FavoritesWidgetState extends StateMVC<FavoritesWidget> {
   String layout = 'grid';
 
-  FavoriteController _con;
+  late FavoriteController _con;
 
   _FavoritesWidgetState() : super(FavoriteController()) {
-    _con = controller;
+    _con = controller as FavoriteController;
   }
 
   @override
@@ -36,7 +37,7 @@ class _FavoritesWidgetState extends StateMVC<FavoritesWidget> {
       appBar: AppBar(
         leading: new IconButton(
           icon: new Icon(Icons.sort, color: Theme.of(context).hintColor),
-          onPressed: () => widget.parentScaffoldKey.currentState.openDrawer(),
+          onPressed: () => widget.parentScaffoldKey.currentState!.openDrawer(),
         ),
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
@@ -44,11 +45,15 @@ class _FavoritesWidgetState extends StateMVC<FavoritesWidget> {
         centerTitle: true,
         title: Text(
           S.of(context).favorites,
-          style: Theme.of(context).textTheme.title.merge(TextStyle(letterSpacing: 1.3)),
+          style: Theme.of(context)
+              .textTheme
+              .titleMedium!
+              .merge(TextStyle(letterSpacing: 1.3)),
         ),
         actions: <Widget>[
           new ShoppingCartButtonWidget(
-              iconColor: Theme.of(context).hintColor, labelColor: Theme.of(context).accentColor),
+              iconColor: Theme.of(context).hintColor,
+              labelColor: Theme.of(context).colorScheme.secondary),
         ],
       ),
       body: currentUser.value.apiToken == null
@@ -65,7 +70,7 @@ class _FavoritesWidgetState extends StateMVC<FavoritesWidget> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: SearchBarWidget(onClickFilter: (e) {
-                        widget.parentScaffoldKey.currentState.openEndDrawer();
+                        widget.parentScaffoldKey.currentState!.openEndDrawer();
                       }),
                     ),
                     SizedBox(height: 10),
@@ -81,7 +86,7 @@ class _FavoritesWidgetState extends StateMVC<FavoritesWidget> {
                           S.of(context).favorite_products,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.display1,
+                          style: Theme.of(context).textTheme.headlineMedium,
                         ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -95,7 +100,7 @@ class _FavoritesWidgetState extends StateMVC<FavoritesWidget> {
                               icon: Icon(
                                 Icons.format_list_bulleted,
                                 color: this.layout == 'list'
-                                    ? Theme.of(context).accentColor
+                                    ? Theme.of(context).colorScheme.secondary
                                     : Theme.of(context).focusColor,
                               ),
                             ),
@@ -108,7 +113,7 @@ class _FavoritesWidgetState extends StateMVC<FavoritesWidget> {
                               icon: Icon(
                                 Icons.apps,
                                 color: this.layout == 'grid'
-                                    ? Theme.of(context).accentColor
+                                    ? Theme.of(context).colorScheme.secondary
                                     : Theme.of(context).focusColor,
                               ),
                             )
@@ -131,7 +136,8 @@ class _FavoritesWidgetState extends StateMVC<FavoritesWidget> {
                               itemBuilder: (context, index) {
                                 return FavoriteListItemWidget(
                                   heroTag: 'favorites_list',
-                                  onPress : ()=>_con.removeFromFavorite(_con.favorites.elementAt(index)),
+                                  onPress: () => _con.removeFromFavorite(
+                                      _con.favorites.elementAt(index)),
                                   favorite: _con.favorites.elementAt(index),
                                 );
                               },
@@ -150,12 +156,18 @@ class _FavoritesWidgetState extends StateMVC<FavoritesWidget> {
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               // Create a grid with 2 columns. If you change the scrollDirection to
                               // horizontal, this produces 2 rows.
-                              crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 4,
+                              crossAxisCount:
+                                  MediaQuery.of(context).orientation ==
+                                          Orientation.portrait
+                                      ? 2
+                                      : 4,
                               // Generate 100 widgets that display their index in the List.
-                              children: List.generate(_con.favorites.length, (index) {
+                              children:
+                                  List.generate(_con.favorites.length, (index) {
                                 return FavoriteGridItemWidget(
                                   heroTag: 'favorites_grid',
-                                  onPress : ()=>_con.removeFromFavorite(_con.favorites.elementAt(index)),
+                                  onPress: () => _con.removeFromFavorite(
+                                      _con.favorites.elementAt(index)),
                                   favorite: _con.favorites.elementAt(index),
                                 );
                               }),

@@ -16,7 +16,8 @@ import '../models/route_argument.dart';
 class MarketCategoryWidget extends StatefulWidget {
   final RouteArgument routeArgument;
 
-  MarketCategoryWidget({Key key, this.routeArgument}) : super(key: key);
+  MarketCategoryWidget({Key? key, required this.routeArgument})
+      : super(key: key);
 
   @override
   _MarketCategoryWidgetState createState() => _MarketCategoryWidgetState();
@@ -27,10 +28,10 @@ class _MarketCategoryWidgetState extends StateMVC<MarketCategoryWidget> {
   String layout = 'grid';
   ScrollController scrollController = ScrollController();
 
-  CategoryController _con;
+  late CategoryController _con;
 
   _MarketCategoryWidgetState() : super(CategoryController()) {
-    _con = controller;
+    _con = controller as CategoryController;
   }
 
   @override
@@ -71,7 +72,7 @@ class _MarketCategoryWidgetState extends StateMVC<MarketCategoryWidget> {
           S.of(context).category,
           style: Theme.of(context)
               .textTheme
-              .title
+              .titleMedium!
               .merge(TextStyle(letterSpacing: 0)),
         ),
         actions: <Widget>[
@@ -88,7 +89,7 @@ class _MarketCategoryWidgetState extends StateMVC<MarketCategoryWidget> {
                 )
               : ShoppingCartButtonWidget(
                   iconColor: Theme.of(context).hintColor,
-                  labelColor: Theme.of(context).accentColor),
+                  labelColor: Theme.of(context).colorScheme.secondary),
         ],
       ),
       body: RefreshIndicator(
@@ -120,7 +121,7 @@ class _MarketCategoryWidgetState extends StateMVC<MarketCategoryWidget> {
                     _con.category?.name ?? '',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.display1,
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -134,7 +135,7 @@ class _MarketCategoryWidgetState extends StateMVC<MarketCategoryWidget> {
                         icon: Icon(
                           Icons.format_list_bulleted,
                           color: this.layout == 'list'
-                              ? Theme.of(context).accentColor
+                              ? Theme.of(context).colorScheme.secondary
                               : Theme.of(context).focusColor,
                         ),
                       ),
@@ -147,7 +148,7 @@ class _MarketCategoryWidgetState extends StateMVC<MarketCategoryWidget> {
                         icon: Icon(
                           Icons.apps,
                           color: this.layout == 'grid'
-                              ? Theme.of(context).accentColor
+                              ? Theme.of(context).colorScheme.secondary
                               : Theme.of(context).focusColor,
                         ),
                       )
@@ -188,7 +189,7 @@ class _MarketCategoryWidgetState extends StateMVC<MarketCategoryWidget> {
                                       // return object of type Dialog
                                       return AddToCartAlertDialogWidget(
                                           oldProduct:
-                                              _con.carts.elementAt(0)?.product,
+                                              _con.carts.elementAt(0).product!,
                                           newProduct:
                                               _con.products.elementAt(index),
                                           onPressed: (product, {reset: true}) {
@@ -241,7 +242,7 @@ class _MarketCategoryWidgetState extends StateMVC<MarketCategoryWidget> {
                                       // return object of type Dialog
                                       return AddToCartAlertDialogWidget(
                                           oldProduct:
-                                              _con.carts.elementAt(0)?.product,
+                                              _con.carts.elementAt(0).product!,
                                           newProduct:
                                               _con.products.elementAt(index),
                                           onPressed: (product, {reset: true}) {

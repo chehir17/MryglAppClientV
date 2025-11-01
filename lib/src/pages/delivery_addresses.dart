@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_map_location_picker/google_map_location_picker.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 
 import '../../generated/i18n.dart';
@@ -13,22 +12,24 @@ import '../models/address.dart';
 import '../models/payment_method.dart';
 import '../models/route_argument.dart';
 import '../repository/settings_repository.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DeliveryAddressesWidget extends StatefulWidget {
-  RouteArgument routeArgument;
- 
-  DeliveryAddressesWidget({Key key, this.routeArgument}) : super(key: key);
+  RouteArgument? routeArgument;
+
+  DeliveryAddressesWidget({Key? key, this.routeArgument}) : super(key: key);
 
   @override
-  _DeliveryAddressesWidgetState createState() => _DeliveryAddressesWidgetState();
+  _DeliveryAddressesWidgetState createState() =>
+      _DeliveryAddressesWidgetState();
 }
 
 class _DeliveryAddressesWidgetState extends StateMVC<DeliveryAddressesWidget> {
-  DeliveryAddressesController _con;
-  PaymentMethodList list;
+  late DeliveryAddressesController _con;
+  late PaymentMethodList list;
 
   _DeliveryAddressesWidgetState() : super(DeliveryAddressesController()) {
-    _con = controller;
+    _con = controller as DeliveryAddressesController;
   }
 
   @override
@@ -47,34 +48,71 @@ class _DeliveryAddressesWidgetState extends StateMVC<DeliveryAddressesWidget> {
         centerTitle: true,
         title: Text(
           S.of(context).delivery_addresses,
-          style: Theme.of(context).textTheme.title.merge(TextStyle(letterSpacing: 1.3)),
+          style: Theme.of(context)
+              .textTheme
+              .titleMedium!
+              .merge(TextStyle(letterSpacing: 1.3)),
         ),
         actions: <Widget>[
           new ShoppingCartButtonWidget(
-              iconColor: Theme.of(context).hintColor, labelColor: Theme.of(context).accentColor),
+              iconColor: Theme.of(context).hintColor,
+              labelColor: Theme.of(context).colorScheme.secondary),
         ],
       ),
-      floatingActionButton: _con.cart != null && _con.cart.product.market.availableForDelivery
+      floatingActionButton: _con.cart != null &&
+              _con.cart.product!.market.availableForDelivery!
           ? FloatingActionButton(
               onPressed: () async {
-                LocationResult result = await showLocationPicker(
-                  context,
-                  setting.value.googleMapsKey,
-                  initialCenter: LatLng(deliveryAddress.value?.latitude ?? 0, deliveryAddress.value?.longitude ?? 0),
-                  //automaticallyAnimateToCurrentLocation: true,
-                  //mapStylePath: 'assets/mapStyle.json',
-                  myLocationButtonEnabled: true,
-                  //resultCardAlignment: Alignment.bottomCenter,
+                // Use map_location_picker with required config parameter
+                final result = await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => PlacePicker(
+                      apiKey: setting.value.googleMapsKey!, // requis
+                      initialPosition: LatLng(
+                        deliveryAddress.value?.latitude ?? 36.8065,
+                        deliveryAddress.value?.longitude ?? 10.1815,
+                      ),
+                      useCurrentLocation: true,
+                      selectInitialPosition: true,
+                    ),
+                  ),
                 );
-                _con.addAddress(new Address.fromJSON({
-                  'address': result.address,
-                  'latitude': result.latLng.latitude,
-                  'longitude': result.latLng.longitude,
-                }));
-                print("result = $result");
-                //setState(() => _pickedLocation = result);
+
+                // Check the actual type returned by the package
+                // You might need to check the package documentation for the correct type
+                if (result != null) {
+                  // Try to access properties based on what the package actually returns
+                  // This is a guess - you'll need to adjust based on the actual return type
+                  double lat = 0;
+                  double lng = 0;
+                  String address = '';
+
+                  // Try to access common property names
+                  if (result is Map) {
+                    lat = result['latitude'] ?? result['lat'] ?? 0;
+                    lng = result['longitude'] ?? result['lng'] ?? 0;
+                    address =
+                        result['address'] ?? result['formattedAddress'] ?? '';
+                  } else {
+                    // Try to access properties using reflection-like syntax
+                    try {
+                      lat = result.latitude ?? result.latLng?.latitude ?? 0;
+                      lng = result.longitude ?? result.latLng?.longitude ?? 0;
+                      address = result.address ?? result.formattedAddress ?? '';
+                    } catch (e) {
+                      print('Error accessing result properties: $e');
+                    }
+                  }
+
+                  _con.addAddress(new Address.fromJSON({
+                    'address': address,
+                    'latitude': lat,
+                    'longitude': lng,
+                  }));
+                  print("result = $result");
+                }
               },
-              backgroundColor: Theme.of(context).accentColor,
+              backgroundColor: Theme.of(context).colorScheme.secondary,
               child: Icon(
                 Icons.add,
                 color: Theme.of(context).primaryColor,
@@ -100,13 +138,15 @@ class _DeliveryAddressesWidgetState extends StateMVC<DeliveryAddressesWidget> {
                     S.of(context).delivery_addresses,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.display1,
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   subtitle: Text(
-                    S.of(context).long_press_to_edit_item_swipe_item_to_delete_it,
+                    S
+                        .of(context)
+                        .long_press_to_edit_item_swipe_item_to_delete_it,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.caption,
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ),
               ),

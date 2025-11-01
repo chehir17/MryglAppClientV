@@ -53,7 +53,7 @@ class ProductListItemWidget extends StatelessWidget {
                 height: 60,
                 width: 60,
                 decoration: BoxDecoration(
-                  // color: Theme.of(context).accentColor.withOpacity(0.3),
+                  // color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
                   image: DecorationImage(
                     image: CachedNetworkImageProvider(this.product.image.url!),
                     fit: BoxFit.fill,

@@ -1,4 +1,5 @@
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:markets/src/helpers/global.dart';
 import 'package:markets/src/repository/settings_repository.dart';
@@ -21,10 +22,10 @@ class CartWidget extends StatefulWidget {
 }
 
 class _CartWidgetState extends StateMVC<CartWidget> {
-  CartController _con;
-  TextEditingController myController = TextEditingController();
+  late CartController _con;
+  late TextEditingController myController = TextEditingController();
   _CartWidgetState() : super(CartController()) {
-    _con = controller;
+    _con = controller as CartController;
     couponDiscount = 0.0;
     startValue = 0.0;
     couponDiscountValue = 0.0;
@@ -46,9 +47,9 @@ class _CartWidgetState extends StateMVC<CartWidget> {
         automaticallyImplyLeading: false,
         leading: IconButton(
           onPressed: () {
-            if (widget.routeArgument.param == '/Product') {
+            if (widget.routeArgument!.param == '/Product') {
               Navigator.of(context).pushReplacementNamed('/Product',
-                  arguments: RouteArgument(id: widget.routeArgument.id));
+                  arguments: RouteArgument(id: widget.routeArgument!.id));
             } else {
               Navigator.of(context)
                   .pushReplacementNamed('/Pages', arguments: 2);
@@ -64,7 +65,7 @@ class _CartWidgetState extends StateMVC<CartWidget> {
           '${S.of(context).cart}',
           style: Theme.of(context)
               .textTheme
-              .title
+              .titleMedium!
               .merge(TextStyle(letterSpacing: 1.3)),
         ),
       ),
@@ -97,7 +98,8 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                                 S.of(context).shopping_cart,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.display1,
+                                style:
+                                    Theme.of(context).textTheme.headlineMedium,
                               ),
                               subtitle: Text(
                                 S
@@ -105,7 +107,7 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                                     .verify_your_quantity_and_click_checkout,
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.caption,
+                                style: Theme.of(context).textTheme.bodySmall,
                               ),
                             ),
                           ),
@@ -123,14 +125,14 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                                 overflow: TextOverflow.ellipsis,
                                 style: Theme.of(context)
                                     .textTheme
-                                    .display1
+                                    .headlineMedium!
                                     .merge(TextStyle(fontSize: 13)),
                               ),
                               // subtitle: Text(
                               //   S.of(context).verify_your_quantity_and_click_checkout,
                               //   maxLines: 1,
                               //   overflow: TextOverflow.ellipsis,
-                              //   style: Theme.of(context).textTheme.caption,
+                              //   style: Theme.of(context).textTheme.bodySmall,
                               // ),
                             ),
                           ),
@@ -166,7 +168,7 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                                       overflow: TextOverflow.ellipsis,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .display1
+                                          .headlineMedium!
                                           .merge(TextStyle(fontSize: 13)),
                                     ),
                                     subtitle: Text(
@@ -175,7 +177,7 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                                       overflow: TextOverflow.ellipsis,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .caption
+                                          .bodySmall!
                                           .merge(
                                             TextStyle(
                                               fontSize: 13,
@@ -188,7 +190,7 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                               : SizedBox(
                                   height: 0,
                                 ),
-                          setting.value.minimum > 0
+                          setting.value.minimum! > 0
                               ? Padding(
                                   padding: const EdgeInsets.only(
                                       left: 20, right: 10),
@@ -200,12 +202,12 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                                       color: Theme.of(context).hintColor,
                                     ),
                                     title: Text(
-                                      '${S.of(context).the_minimum_price} ${_con.minimum.toStringAsFixed(0)}${setting.value.defaultCurrency}',
+                                      '${S.of(context).the_minimum_price} ${_con.minimum!.toStringAsFixed(0)}${setting.value.defaultCurrency}',
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .display1
+                                          .headlineMedium!
                                           .merge(
                                             TextStyle(fontSize: 13),
                                           ),
@@ -225,7 +227,8 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                               return SizedBox(height: 15);
                             },
                             itemBuilder: (context, index) {
-                              print(_con.carts.elementAt(index).product.unique);
+                              print(
+                                  _con.carts.elementAt(index).product!.unique);
                               return CartItemWidget(
                                 cart: _con.carts.elementAt(index),
                                 heroTag: 'cart',
@@ -278,11 +281,13 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                                 Expanded(
                                   child: Text(
                                     S.of(context).subtotal,
-                                    style: Theme.of(context).textTheme.body2,
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
                                   ),
                                 ),
                                 Helper.getPrice(_con.subTotal, context,
-                                    style: Theme.of(context).textTheme.subhead,
+                                    style:
+                                        Theme.of(context).textTheme.titleSmall,
                                     currency: true)
                               ],
                             ),
@@ -292,11 +297,13 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                                 Expanded(
                                   child: Text(
                                     '${S.of(context).coupon_discount} ($couponDiscount%)',
-                                    style: Theme.of(context).textTheme.body2,
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
                                   ),
                                 ),
                                 Helper.getPrice(-couponDiscountValue, context,
-                                    style: Theme.of(context).textTheme.subhead,
+                                    style:
+                                        Theme.of(context).textTheme.titleSmall,
                                     currency: true)
                               ],
                             ),
@@ -307,7 +314,8 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                                 Expanded(
                                   child: Text(
                                     S.of(context).delivery_fee,
-                                    style: Theme.of(context).textTheme.body2,
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
                                   ),
                                 ),
                                 couponDiscountForDelivery > 0
@@ -325,7 +333,8 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                                     _con.deliveryFee -
                                         couponDiscountForDelivery,
                                     context,
-                                    style: Theme.of(context).textTheme.subhead,
+                                    style:
+                                        Theme.of(context).textTheme.titleSmall,
                                     currency: true),
                               ],
                             ),
@@ -333,12 +342,14 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                               children: <Widget>[
                                 Expanded(
                                   child: Text(
-                                    '${S.of(context).tax} (${_con.carts[0].product.market.defaultTax}%)',
-                                    style: Theme.of(context).textTheme.body2,
+                                    '${S.of(context).tax} (${_con.carts[0].product!.market.defaultTax}%)',
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
                                   ),
                                 ),
                                 Helper.getPrice(_con.taxAmount, context,
-                                    style: Theme.of(context).textTheme.subhead,
+                                    style:
+                                        Theme.of(context).textTheme.titleSmall,
                                     currency: true)
                               ],
                             ),
@@ -347,11 +358,11 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                             //     Expanded(
                             //       child: Text(
                             //         '${S.of(context).delivery_address}',
-                            //         style: Theme.of(context).textTheme.body2,
+                            //         style: Theme.of(context).textTheme.bodySmall,
                             //       ),
                             //     ),
                             //     Helper.getPrice(_con.taxAmount, context,
-                            //         style: Theme.of(context).textTheme.subhead,
+                            //         style: Theme.of(context).textTheme.titleSmall,
                             //         currency: true)
                             //   ],
                             // ),
@@ -368,23 +379,27 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                                         width:
                                             MediaQuery.of(context).size.width -
                                                 40,
-                                        child: FlatButton(
-                                          onPressed: !_con.carts[0].product
-                                                  .market.closed
+                                        child: ElevatedButton(
+                                          onPressed: !_con.carts[0].product!
+                                                  .market.closed!
                                               ? _con.longDistance
                                                   ? () {
-                                                      _con.scaffoldKey
-                                                          ?.currentState
-                                                          ?.showSnackBar(
-                                                              SnackBar(
-                                                        content: Text(S
-                                                            .of(context)
-                                                            .delivery_cannot_be_more_than(
-                                                                setting.value
-                                                                    .maxRadius
-                                                                    .toStringAsFixed(
-                                                                        0))),
-                                                      ));
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBar(
+                                                          content: Text(
+                                                            S
+                                                                .of(context)
+                                                                .delivery_cannot_be_more_than(
+                                                                  setting.value
+                                                                      .maxRadius!
+                                                                      .toStringAsFixed(
+                                                                          0),
+                                                                ),
+                                                          ),
+                                                        ),
+                                                      );
                                                     }
                                                   : () {
                                                       if (currentUser.value
@@ -399,34 +414,34 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                                                         cart = true;
                                                         Navigator.of(context)
                                                             .pushReplacementNamed(
-                                                                '/Settings',
-                                                                arguments:
-                                                                    true);
+                                                          '/Settings',
+                                                          arguments: true,
+                                                        );
                                                       } else if (_con
                                                           .isOutOfStock()) {
                                                         Flushbar(
-                                                          // title:  "Ooops !!",
                                                           message: S
                                                               .of(context)
                                                               .please_delete_any_product_that_is_out_of_stock_in_your_cart,
-                                                          duration: Duration(
-                                                              seconds: 3),
+                                                          duration:
+                                                              const Duration(
+                                                                  seconds: 3),
                                                           flushbarPosition:
                                                               FlushbarPosition
                                                                   .TOP,
-                                                        )..show(context);
+                                                        ).show(context);
                                                       } else if (_con.subTotal <
-                                                          _con.minimum) {
+                                                          _con.minimum!) {
                                                         Flushbar(
-                                                          // title:  "Ooops !!",
                                                           message:
-                                                              '${S.of(context).the_minimum_price} ${_con.minimum.toStringAsFixed(0)}${setting.value.defaultCurrency}',
-                                                          duration: Duration(
-                                                              seconds: 3),
+                                                              '${S.of(context).the_minimum_price} ${_con.minimum!.toStringAsFixed(0)}${setting.value.defaultCurrency}',
+                                                          duration:
+                                                              const Duration(
+                                                                  seconds: 3),
                                                           flushbarPosition:
                                                               FlushbarPosition
                                                                   .TOP,
-                                                        )..show(context);
+                                                        ).show(context);
                                                       } else {
                                                         if (!_con.navigate) {
                                                           Navigator.of(context)
@@ -457,25 +472,28 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                                                       }
                                                     }
                                               : () {
-                                                  _con.scaffoldKey?.currentState
-                                                      ?.showSnackBar(SnackBar(
-                                                    content: Text(S
-                                                        .of(context)
-                                                        .this_market_is_closed_),
-                                                  ));
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(S
+                                                          .of(context)
+                                                          .this_market_is_closed_),
+                                                    ),
+                                                  );
                                                 },
-                                          disabledColor: Theme.of(context)
-                                              .focusColor
-                                              .withOpacity(0.5),
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 14),
-                                          color: !_con.carts[0].product.market
-                                                  .closed
-                                              ? Theme.of(context).accentColor
-                                              : Theme.of(context)
-                                                  .focusColor
-                                                  .withOpacity(0.5),
-                                          shape: StadiumBorder(),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: !_con.carts[0]
+                                                    .product!.market.closed!
+                                                ? Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary
+                                                : Theme.of(context)
+                                                    .focusColor
+                                                    .withOpacity(0.5),
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 14),
+                                            shape: const StadiumBorder(),
+                                          ),
                                           child: Row(
                                             children: [
                                               Padding(
@@ -486,8 +504,9 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                                                   S.of(context).checkout,
                                                   textAlign: TextAlign.start,
                                                   style: TextStyle(
-                                                      color: Theme.of(context)
-                                                          .primaryColor),
+                                                    color: Theme.of(context)
+                                                        .primaryColor,
+                                                  ),
                                                 ),
                                               ),
                                               Padding(
@@ -500,12 +519,12 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                                                   currency: true,
                                                   style: Theme.of(context)
                                                       .textTheme
-                                                      .display1
-                                                      .merge(TextStyle(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
-                                                          fontSize: 16)),
+                                                      .headlineSmall
+                                                      ?.copyWith(
+                                                        color: Theme.of(context)
+                                                            .primaryColor,
+                                                        fontSize: 16,
+                                                      ),
                                                 ),
                                               )
                                             ],
@@ -538,7 +557,7 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                                                       S.of(context).coupon_code,
                                                       style: Theme.of(context)
                                                           .textTheme
-                                                          .body2,
+                                                          .bodyMedium,
                                                     )
                                                   ],
                                                 ),
@@ -606,7 +625,8 @@ class _CartWidgetState extends StateMVC<CartWidget> {
                                                           style: TextStyle(
                                                               color: Theme.of(
                                                                       context)
-                                                                  .accentColor),
+                                                                  .colorScheme
+                                                                  .secondary),
                                                         ),
                                                       ),
                                                     ],
@@ -644,11 +664,11 @@ class _CartWidgetState extends StateMVC<CartWidget> {
     );
   }
 
-  InputDecoration getInputDecoration({String hintText, String labelText}) {
+  InputDecoration getInputDecoration({String? hintText, String? labelText}) {
     return new InputDecoration(
       hintText: hintText,
       labelText: labelText,
-      hintStyle: Theme.of(context).textTheme.body1.merge(
+      hintStyle: Theme.of(context).textTheme.bodyMedium!.merge(
             TextStyle(color: Theme.of(context).focusColor),
           ),
       enabledBorder: UnderlineInputBorder(
@@ -656,8 +676,8 @@ class _CartWidgetState extends StateMVC<CartWidget> {
               BorderSide(color: Theme.of(context).hintColor.withOpacity(0.2))),
       focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: Theme.of(context).hintColor)),
-      hasFloatingPlaceholder: true,
-      labelStyle: Theme.of(context).textTheme.body1.merge(
+      floatingLabelBehavior: FloatingLabelBehavior.auto,
+      labelStyle: Theme.of(context).textTheme.bodyMedium!.merge(
             TextStyle(color: Theme.of(context).hintColor),
           ),
     );

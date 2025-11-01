@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../elements/DrawerWidget.dart';
@@ -16,13 +15,13 @@ import 'messages.dart';
 
 class PagesWidget extends StatefulWidget {
   dynamic currentTab;
-  RouteArgument routeArgument;
-  String version;
+  late RouteArgument routeArgument;
+  late String version;
   Widget currentPage = HomeWidget();
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   PagesWidget({
-    Key key,
+    Key? key,
     this.currentTab,
   }) {
     if (currentTab != null) {
@@ -42,7 +41,7 @@ class PagesWidget extends StatefulWidget {
 }
 
 class _PagesWidgetState extends State<PagesWidget> {
-  String version;
+  String? version;
 
   initState() {
     super.initState();
@@ -57,7 +56,7 @@ class _PagesWidgetState extends State<PagesWidget> {
   //   showDialog(
   //     context: widget.scaffoldKey.currentContext,
   //     builder: (context) => new AlertDialog(
-  //       title: new Text('Update'),
+  //       titleMedium: new Text('Update'),
   //       content: new Text('update'),
   //       actions: <Widget>[
   //         new FlatButton(
@@ -125,11 +124,11 @@ class _PagesWidgetState extends State<PagesWidget> {
             title: new Text(S.current.are_you_sure),
             content: new Text(S.current.do_you_want_to_exit_an_app),
             actions: <Widget>[
-              new FlatButton(
+              new ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(false),
                 child: new Text(S.current.no),
               ),
-              new FlatButton(
+              new ElevatedButton(
                 onPressed: () => SystemNavigator.pop(),
                 child: new Text(S.current.yes),
               ),
@@ -153,7 +152,7 @@ class _PagesWidgetState extends State<PagesWidget> {
         body: widget.currentPage,
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: Theme.of(context).accentColor,
+          selectedItemColor: Theme.of(context).colorScheme.secondary,
           selectedFontSize: 0,
           unselectedFontSize: 0,
           iconSize: 22,
@@ -168,30 +167,36 @@ class _PagesWidgetState extends State<PagesWidget> {
           // this will be set when a new tab is tapped
           items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.notifications),
-              title: new Container(height: 0.0),
-            ),
+                icon: Icon(Icons.notifications),
+                // title: new Container(height: 0.0),
+                label: ""),
             BottomNavigationBarItem(
-              icon: Icon(Icons.location_on),
-              title: new Container(height: 0.0),
-            ),
+                icon: Icon(Icons.location_on),
+                // titleMedium: new Container(height: 0.0),
+                label: ""),
             BottomNavigationBarItem(
-                title: new Container(height: 5.0),
+                label: "",
                 icon: Container(
                   width: 42,
                   height: 42,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).accentColor,
+                    color: Theme.of(context).colorScheme.secondary,
                     borderRadius: BorderRadius.all(
                       Radius.circular(50),
                     ),
                     boxShadow: [
                       BoxShadow(
-                          color: Theme.of(context).accentColor.withOpacity(0.4),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.4),
                           blurRadius: 40,
                           offset: Offset(0, 15)),
                       BoxShadow(
-                          color: Theme.of(context).accentColor.withOpacity(0.4),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.4),
                           blurRadius: 13,
                           offset: Offset(0, 3))
                     ],
@@ -200,13 +205,13 @@ class _PagesWidgetState extends State<PagesWidget> {
                       color: Theme.of(context).primaryColor),
                 )),
             BottomNavigationBarItem(
-              icon: new Icon(Icons.local_mall),
-              title: new Container(height: 0.0),
-            ),
+                icon: new Icon(Icons.local_mall),
+                // titleMedium: new Container(height: 0.0),
+                label: ""),
             BottomNavigationBarItem(
-              icon: new Icon(Icons.favorite),
-              title: new Container(height: 0.0),
-            ),
+                icon: new Icon(Icons.favorite),
+                // titleMedium: new Container(height: 0.0),
+                label: ""),
           ],
         ),
       ),

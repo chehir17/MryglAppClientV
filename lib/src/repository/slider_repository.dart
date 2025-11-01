@@ -15,7 +15,7 @@ Future<Stream<SliderProduct>> getSliders() async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) => SliderProduct.fromJSON(data));
 }

@@ -13,17 +13,17 @@ import '../repository/user_repository.dart';
 class MessagesWidget extends StatefulWidget {
   final GlobalKey<ScaffoldState> parentScaffoldKey;
 
-  MessagesWidget({Key key, this.parentScaffoldKey}) : super(key: key);
+  MessagesWidget({Key? key, required this.parentScaffoldKey}) : super(key: key);
 
   @override
   _MessagesWidgetState createState() => _MessagesWidgetState();
 }
 
 class _MessagesWidgetState extends StateMVC<MessagesWidget> {
-  ChatController _con;
+  late ChatController _con;
 
   _MessagesWidgetState() : super(ChatController()) {
-    _con = controller;
+    _con = controller as ChatController;
   }
 
   @override
@@ -71,7 +71,7 @@ class _MessagesWidgetState extends StateMVC<MessagesWidget> {
       appBar: AppBar(
         leading: new IconButton(
           icon: new Icon(Icons.sort, color: Theme.of(context).hintColor),
-          onPressed: () => widget.parentScaffoldKey.currentState.openDrawer(),
+          onPressed: () => widget.parentScaffoldKey.currentState!.openDrawer(),
         ),
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
@@ -83,13 +83,13 @@ class _MessagesWidgetState extends StateMVC<MessagesWidget> {
           maxLines: 1,
           style: Theme.of(context)
               .textTheme
-              .headline6
+              .headlineSmall!
               .merge(TextStyle(letterSpacing: 1.3)),
         ),
         actions: <Widget>[
           new ShoppingCartButtonWidget(
               iconColor: Theme.of(context).hintColor,
-              labelColor: Theme.of(context).accentColor),
+              labelColor: Theme.of(context).colorScheme.secondary),
         ],
       ),
       body: currentUser.value.apiToken == null

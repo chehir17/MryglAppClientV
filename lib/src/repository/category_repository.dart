@@ -16,7 +16,7 @@ Future<Stream<Category>> getCategories() async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) => Category.fromJSON(data));
 }
@@ -32,7 +32,7 @@ Future<Stream<Category>> getSubCategories(id) async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) => Category.fromJSONWithSub(data[0]));
 }
@@ -47,6 +47,7 @@ Future<Stream<Category>> getCategory(String id) async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      // .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .map((data) => Category.fromJSON(data));
 }

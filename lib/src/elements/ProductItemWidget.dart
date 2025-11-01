@@ -94,7 +94,7 @@ class ProductItemWidget extends StatelessWidget {
                         //   '${product.packageItemsCount} ${S.current.items}',
                         //   overflow: TextOverflow.ellipsis,
                         //   maxLines: 2,
-                        //   style: Theme.of(context).textTheme.caption.merge(TextStyle(fontWeight: FontWeight.bold,fontSize:13)),
+                        //   style: Theme.of(context).textTheme.bodySmall.merge(TextStyle(fontWeight: FontWeight.bold,fontSize:13)),
                         // ),
                       ],
                     ),

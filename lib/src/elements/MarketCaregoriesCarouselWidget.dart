@@ -9,7 +9,8 @@ class MarketCategoriesCarouselWidget extends StatelessWidget {
   List<Category> categories;
   final String marketId;
 
-  MarketCategoriesCarouselWidget({Key key, this.categories, this.marketId})
+  MarketCategoriesCarouselWidget(
+      {Key? key, required this.categories, required this.marketId})
       : super(key: key);
 
   @override

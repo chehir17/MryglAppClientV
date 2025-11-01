@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:markets/src/helpers/global.dart';
 import 'package:markets/src/helpers/helper.dart';
 import 'package:markets/src/models/slider.dart';
@@ -9,8 +8,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rating_dialog/rating_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:giffy_dialog/giffy_dialog.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 import '../models/category.dart';
 import '../models/market.dart';
@@ -31,18 +29,14 @@ class HomeController extends ControllerMVC {
   late List<SliderProduct> sliders = <SliderProduct>[];
   late GlobalKey<ScaffoldState> scaffoldKey;
   late String version;
-  // bool isAlertboxOpened;
 
   HomeController() {
-    this.scaffoldKey = new GlobalKey<ScaffoldState>();
+    scaffoldKey = GlobalKey<ScaffoldState>();
     listenForSliders();
     listenForCategories();
     listenForTopMarkets();
     listenForTopRests();
     Helper.getInstallDate();
-    // checkAppVersion();
-    // listenForRecentReviews();
-    // listenForTrendingProducts();
   }
 
   void setDisableUpdate() async {
@@ -54,7 +48,7 @@ class HomeController extends ControllerMVC {
     Future.delayed(const Duration(seconds: 3), () {
       showDialog(
         context: scaffoldKey.currentContext!,
-        barrierDismissible: true, // set to false if you want to force a rating
+        barrierDismissible: true,
         builder: (context) {
           return RatingDialog(
             title: const Text(
@@ -73,8 +67,7 @@ class HomeController extends ControllerMVC {
             onSubmitted: (response) {
               debugPrint(
                   "Rating: ${response.rating}, Comment: ${response.comment}");
-              Navigator.pop(context); // close after submit
-              // TODO: handle submission (e.g., send to backend, open Play Store, etc.)
+              Navigator.pop(context);
             },
             onCancelled: () {
               debugPrint("Dialog dismissed without rating");
@@ -91,62 +84,27 @@ class HomeController extends ControllerMVC {
 
     Future.delayed(const Duration(seconds: 5), () async {
       if (setting.value.appVersion != version && showD) {
-        showDialog(
+        AwesomeDialog(
           context: context,
-          builder: (_) {
-            return GiffyDialog.image(
-              Image.asset(
-                "assets/img/Mriguel.jpg",
-                fit: BoxFit.cover,
-              ),
-              title: const Text(
-                'عملا على تحسين تجربتكم يرجى تحديث التطبيق',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
-              ),
-              content: const Text(
-                '', // لازم description حتى كان فارغ
-                textAlign: TextAlign.center,
-              ),
-              entryAnimation: EntryAnimation.bottom,
-              actions: [
-                TextButton(
-                  onPressed: () async {
-                    showD = false;
-                    final url = Uri.parse(
-                      'https://play.google.com/store/apps/details?id=com.mriguel.markets',
-                    );
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(url,
-                          mode: LaunchMode.externalApplication);
-                    }
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    'تحديث',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    showD = false;
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text(
-                    'تجاهل',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                )
-              ],
-            );
+          dialogType: DialogType.info,
+          animType: AnimType.bottomSlide,
+          headerAnimationLoop: false,
+          title: 'عملا على تحسين تجربتكم يرجى تحديث التطبيق',
+          desc: '', // description vide si nécessaire
+          btnOkText: 'تحديث',
+          btnCancelText: 'تجاهل',
+          btnOkOnPress: () async {
+            showD = false;
+            final url = Uri.parse(
+                'https://play.google.com/store/apps/details?id=com.mriguel.markets');
+            if (await canLaunchUrl(url)) {
+              await launchUrl(url, mode: LaunchMode.externalApplication);
+            }
           },
-        );
+          btnCancelOnPress: () {
+            showD = false;
+          },
+        ).show();
       }
     });
   }
@@ -185,22 +143,6 @@ class HomeController extends ControllerMVC {
     }, onError: (a) {}, onDone: () {});
   }
 
-  Future<void> listenForRecentReviews() async {
-    final Stream<Review> stream = await getRecentReviews();
-    stream.listen((Review _review) {
-      setState(() => recentReviews.add(_review));
-    }, onError: (a) {}, onDone: () {});
-  }
-
-  // Future<void> listenForTrendingProducts() async {
-  //   final Stream<Product> stream = await getTrendingProducts();
-  //   stream.listen((Product _product) {
-  //     setState(() => trendingProducts.add(_product));
-  //   }, onError: (a) {
-  //     print(a);
-  //   }, onDone: () {});
-  // }
-
   void requestForCurrentLocation(BuildContext context) {
     Helper.locationPermission();
     OverlayEntry loader = Helper.overlayLoader(context);
@@ -216,7 +158,6 @@ class HomeController extends ControllerMVC {
     categories = <Category>[];
     topMarkets = <Market>[];
     topRests = <Market>[];
-    // recentReviews = <Review>[];
     trendingProducts = <Product>[];
     sliders = <SliderProduct>[];
 
@@ -224,7 +165,5 @@ class HomeController extends ControllerMVC {
     await listenForCategories();
     await listenForTopMarkets();
     await listenForTopRests();
-    // await listenForRecentReviews();
-    // await listenForTrendingProducts();
   }
 }

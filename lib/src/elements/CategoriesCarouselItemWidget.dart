@@ -50,7 +50,7 @@ class CategoriesCarouselItemWidget extends StatelessWidget {
                   // category.image.url.toString().split(".").contains("svg")
                   // ? SvgPicture.network(
                   //     category.image.url,
-                  //     color: Theme.of(context).accentColor,
+                  //     color: Theme.of(context).colorScheme.secondary,
                   //   )
                   // : Image.network(category.image.url),
                   ),

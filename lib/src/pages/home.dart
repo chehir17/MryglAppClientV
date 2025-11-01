@@ -14,20 +14,20 @@ import '../repository/settings_repository.dart' as settingsRepo;
 import '../repository/user_repository.dart';
 
 class HomeWidget extends StatefulWidget {
-  final GlobalKey<ScaffoldState> parentScaffoldKey;
+  final GlobalKey<ScaffoldState>? parentScaffoldKey;
 
-  HomeWidget({Key key, this.parentScaffoldKey}) : super(key: key);
+  HomeWidget({Key? key, this.parentScaffoldKey}) : super(key: key);
 
   @override
   _HomeWidgetState createState() => _HomeWidgetState();
 }
 
 class _HomeWidgetState extends StateMVC<HomeWidget> {
-  HomeController _con;
-  DateTime backButtonPressTime;
+  late HomeController _con;
+  late DateTime backButtonPressTime;
   static const snackBarDuration = Duration(seconds: 3);
   _HomeWidgetState() : super(HomeController()) {
-    _con = controller;
+    _con = controller as HomeController;
     // requestPermission();
     // _con.checkAppVersion();
   }
@@ -70,12 +70,12 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
                   children: [
                     Text(S.current.delivery_address),
                     Text(
-                      (settingsRepo.deliveryAddress.value?.title[0] ??
+                      (settingsRepo.deliveryAddress.value.title[0] ??
                           '' +
                               ',' +
-                              settingsRepo.deliveryAddress.value?.title[1] ??
+                              settingsRepo.deliveryAddress.value.title[1] ??
                           ''),
-                      style: Theme.of(context).textTheme.caption.merge(
+                      style: Theme.of(context).textTheme.bodySmall!.merge(
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                     ),
                   ],
@@ -84,7 +84,7 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
         ),
         leading: new IconButton(
           icon: new Icon(Icons.sort, color: Theme.of(context).hintColor),
-          onPressed: () => widget.parentScaffoldKey.currentState.openDrawer(),
+          onPressed: () => widget.parentScaffoldKey!.currentState!.openDrawer(),
         ),
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
@@ -108,7 +108,7 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
           // _con.version != settingsRepo.setting.value.appVersion ? UpdateButtonWidget(iconColor: Theme.of(context).hintColor, labelColor: Theme.of(context).accentColor) : SizedBox(height: 0,),
           new ShoppingCartButtonWidget(
               iconColor: Theme.of(context).hintColor,
-              labelColor: Theme.of(context).accentColor),
+              labelColor: Theme.of(context).colorScheme.secondary),
         ],
       ),
       body: RefreshIndicator(
@@ -130,10 +130,10 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
                       } else {
                         Helper.locationPermission();
                         var bottomSheetController = widget
-                            .parentScaffoldKey.currentState
+                            .parentScaffoldKey!.currentState!
                             .showBottomSheet(
                           (context) => DeliveryAddressBottomSheetWidget(
-                              scaffoldKey: widget.parentScaffoldKey),
+                              scaffoldKey: widget.parentScaffoldKey!),
                           shape: RoundedRectangleBorder(
                             borderRadius: new BorderRadius.only(
                                 topLeft: Radius.circular(10),
@@ -151,7 +151,7 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
                     ),
                   ),
                   onClickFilter: (event) {
-                    widget.parentScaffoldKey.currentState.openEndDrawer();
+                    widget.parentScaffoldKey!.currentState!.openEndDrawer();
                   },
                 ),
               ),
@@ -167,7 +167,7 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
                         ),
                         title: Text(
                           S.of(context).best_offers,
-                          style: Theme.of(context).textTheme.display1,
+                          style: Theme.of(context).textTheme.headlineMedium,
                         ),
                       ),
                     )
@@ -175,7 +175,10 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
                       height: 0,
                     ),
               _con.sliders.length > 0
-                  ? SlidersCarouselItemWidget(slider: _con.sliders)
+                  ? SlidersCarouselItemWidget(
+                      slider: _con.sliders,
+                      marginLeft: 0.0,
+                    )
                   : SizedBox(
                       height: 0,
                     ),
@@ -192,7 +195,7 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
                         ),
                         title: Text(
                           S.of(context).best_restaurants,
-                          style: Theme.of(context).textTheme.display1,
+                          style: Theme.of(context).textTheme.headlineMedium,
                         ),
                       ),
                     )
@@ -235,7 +238,7 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
                         // ),
                         title: Text(
                           S.of(context).top_markets,
-                          style: Theme.of(context).textTheme.display1,
+                          style: Theme.of(context).textTheme.headlineMedium,
                         ),
                         // subtitle: Text(
                         //   settingsRepo.deliveryAddress.value?.address != null
@@ -279,7 +282,7 @@ class _HomeWidgetState extends StateMVC<HomeWidget> {
                   ),
                   title: Text(
                     S.of(context).product_categories,
-                    style: Theme.of(context).textTheme.display1,
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
                 ),
               ),

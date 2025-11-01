@@ -23,7 +23,7 @@ import '../models/route_argument.dart';
 class DetailsWidget extends StatefulWidget {
   RouteArgument routeArgument;
 
-  DetailsWidget({Key key, this.routeArgument}) : super(key: key);
+  DetailsWidget({Key? key, required this.routeArgument}) : super(key: key);
 
   @override
   _DetailsWidgetState createState() {
@@ -32,10 +32,10 @@ class DetailsWidget extends StatefulWidget {
 }
 
 class _DetailsWidgetState extends StateMVC<DetailsWidget> {
-  MarketController _con;
+  late MarketController _con;
 
   _DetailsWidgetState() : super(MarketController()) {
-    _con = controller;
+    _con = controller as MarketController;
   }
 
   @override
@@ -43,7 +43,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
     _con.listenForMarket(id: widget.routeArgument.id);
     // _con.listenForGalleries(widget.routeArgument.id);
     // _con.listenForMarketReviews(id: widget.routeArgument.id);
-    _con.listenForFeaturedProducts(widget.routeArgument.id);
+    _con.listenForFeaturedProducts(widget.routeArgument.id!);
     _con.listenForCart();
     super.initState();
   }
@@ -81,8 +81,10 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                       shrinkWrap: false,
                       slivers: <Widget>[
                         SliverAppBar(
-                          backgroundColor:
-                              Theme.of(context).accentColor.withOpacity(0.9),
+                          backgroundColor: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.9),
                           expandedHeight: 300,
                           elevation: 0,
                           iconTheme: IconThemeData(
@@ -90,11 +92,11 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                           flexibleSpace: FlexibleSpaceBar(
                             collapseMode: CollapseMode.parallax,
                             background: Hero(
-                              tag:
-                                  widget.routeArgument.heroTag + _con.market.id,
+                              tag: widget.routeArgument.heroTag! +
+                                  _con.market.id!,
                               child: CachedNetworkImage(
                                 fit: BoxFit.fill,
-                                imageUrl: _con.market.image.url,
+                                imageUrl: _con.market.image!.url!,
                                 placeholder: (context, url) => Image.asset(
                                   'assets/img/loading.gif',
                                   fit: BoxFit.cover,
@@ -120,13 +122,13 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                                   children: <Widget>[
                                     Expanded(
                                       child: Text(
-                                        _con.market.name,
+                                        _con.market.name!,
                                         overflow: TextOverflow.fade,
                                         softWrap: false,
                                         maxLines: 2,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .display2,
+                                            .headlineLarge,
                                       ),
                                     ),
                                     // SizedBox(
@@ -140,7 +142,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                                     //         Text(_con.market.rate,
                                     //             style: Theme.of(context)
                                     //                 .textTheme
-                                    //                 .body2
+                                    //                 .bodySmall
                                     //                 .merge(TextStyle(
                                     //                     color: Theme.of(context)
                                     //                         .primaryColor))),
@@ -153,7 +155,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                                     //       ],
                                     //     ),
                                     //     backgroundColor: Theme.of(context)
-                                    //         .accentColor
+                                    //         .colorScheme.secondary
                                     //         .withOpacity(0.9),
                                     //     shape: StadiumBorder(),
                                     //   ),
@@ -168,17 +170,17 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 12, vertical: 3),
                                     decoration: BoxDecoration(
-                                        color: _con.market.closed
+                                        color: _con.market.closed!
                                             ? Colors.grey
                                             : Colors.green,
                                         borderRadius:
                                             BorderRadius.circular(24)),
-                                    child: _con.market.closed
+                                    child: _con.market.closed!
                                         ? Text(
                                             S.of(context).closed,
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .caption
+                                                .bodySmall!
                                                 .merge(TextStyle(
                                                     color: Theme.of(context)
                                                         .primaryColor)),
@@ -187,7 +189,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                                             S.of(context).open,
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .caption
+                                                .bodySmall!
                                                 .merge(TextStyle(
                                                     color: Theme.of(context)
                                                         .primaryColor)),
@@ -211,7 +213,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                                             S.of(context).delivery,
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .caption
+                                                .bodySmall!
                                                 .merge(TextStyle(
                                                     color: Theme.of(context)
                                                         .primaryColor)),
@@ -220,7 +222,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                                           //     S.of(context).pickup,
                                           //     style: Theme.of(context)
                                           //         .textTheme
-                                          //         .caption
+                                          //         .bodySmall
                                           //         .merge(TextStyle(color: Theme.of(context).primaryColor)),
                                           //   ),
                                           )
@@ -238,10 +240,10 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                                         borderRadius:
                                             BorderRadius.circular(24)),
                                     child: Text(
-                                      Helper.getDistance(_con.market.distance),
+                                      Helper.getDistance(_con.market.distance!),
                                       style: Theme.of(context)
                                           .textTheme
-                                          .caption
+                                          .bodySmall!
                                           .merge(TextStyle(
                                               color: Theme.of(context)
                                                   .primaryColor)),
@@ -254,7 +256,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                               //   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                               //   child: Html(
                               //     data: _con.market.description,
-                              //     defaultTextStyle: Theme.of(context).textTheme.body1.merge(TextStyle(fontSize: 14)),
+                              //     defaultTextStyle: Theme.of(context).textTheme.bodyMedium.merge(TextStyle(fontSize: 14)),
                               //   ),
                               // ),
                               // ImageThumbCarouselWidget(galleriesList: _con.galleries),
@@ -269,7 +271,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                               //     ),
                               //     title: Text(
                               //       S.of(context).information,
-                              //       style: Theme.of(context).textTheme.display1,
+                              //       style: Theme.of(context).textTheme.headlineMedium,
                               //     ),
                               //   ),
                               // ): Container(),
@@ -294,7 +296,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                               //           _con.market.address,
                               //           overflow: TextOverflow.ellipsis,
                               //           maxLines: 2,
-                              //           style: Theme.of(context).textTheme.body2,
+                              //           style: Theme.of(context).textTheme.bodySmall,
                               //         ),
                               //       ):SizedBox(width: 0),
                               //       SizedBox(width: 10),
@@ -313,7 +315,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                               //             color: Theme.of(context).primaryColor,
                               //             size: 24,
                               //           ),
-                              //           color: Theme.of(context).accentColor.withOpacity(0.9),
+                              //           color: Theme.of(context).colorScheme.secondary.withOpacity(0.9),
                               //           shape: StadiumBorder(),
                               //         ),
                               //       ):SizedBox(width: 0),
@@ -331,7 +333,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                               //         child: Text(
                               //           '${_con.market.phone != null ? _con.market.phone : ""} \n ${_con.market.mobile != null ? _con.market.mobile : ""}',
                               //           overflow: TextOverflow.ellipsis,
-                              //           style: Theme.of(context).textTheme.body2,
+                              //           style: Theme.of(context).textTheme.bodySmall,
                               //         ),
                               //       ),
                               //       SizedBox(width: 10),
@@ -348,7 +350,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                               //             color: Theme.of(context).primaryColor,
                               //             size: 24,
                               //           ),
-                              //           color: Theme.of(context).accentColor.withOpacity(0.9),
+                              //           color: Theme.of(context).colorScheme.secondary.withOpacity(0.9),
                               //           shape: StadiumBorder(),
                               //         ),
                               //       ),
@@ -358,7 +360,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                               SizedBox(
                                 height: 40,
                               ),
-                              _con.market.categories.length > 0
+                              _con.market.categories!.length > 0
                                   ? Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 20),
@@ -374,15 +376,15 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                                           S.of(context).product_categories,
                                           style: Theme.of(context)
                                               .textTheme
-                                              .display1,
+                                              .headlineMedium,
                                         ),
                                       ),
                                     )
                                   : SizedBox(height: 0),
-                              _con.market.categories.length > 0
+                              _con.market.categories!.length > 0
                                   ? MarketCategoriesCarouselWidget(
-                                      categories: _con.market.categories,
-                                      marketId: _con.market.id,
+                                      categories: _con.market.categories!,
+                                      marketId: _con.market.id!,
                                     )
                                   : SizedBox(height: 0),
                               _con.featuredProducts.isEmpty
@@ -402,7 +404,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                                           S.of(context).featured_products,
                                           style: Theme.of(context)
                                               .textTheme
-                                              .display1,
+                                              .headlineMedium,
                                         ),
                                       ),
                                     ),
@@ -443,7 +445,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                                                   return AddToCartAlertDialogWidget(
                                                       oldProduct: _con.carts
                                                           .elementAt(0)
-                                                          ?.product,
+                                                          .product!,
                                                       newProduct:
                                                           _con.products[index],
                                                       onPressed: (product,
@@ -474,7 +476,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                               //             ),
                               //             title: Text(
                               //               S.of(context).what_they_say,
-                              //               style: Theme.of(context).textTheme.display1,
+                              //               style: Theme.of(context).textTheme.headlineMedium,
                               //             ),
                               //           ),
                               //         ),
@@ -498,10 +500,13 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                       child: SizedBox(
                         width: 60,
                         height: 60,
-                        child: RaisedButton(
-                          padding: EdgeInsets.all(0),
-                          color: Theme.of(context).accentColor,
-                          shape: StadiumBorder(),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.all(0),
+                            backgroundColor:
+                                Theme.of(context).colorScheme.secondary,
+                            shape: StadiumBorder(),
+                          ),
                           onPressed: () {
                             if (currentUser.value.apiToken != null) {
                               Navigator.of(context).pushNamed('/Cart',
@@ -531,7 +536,7 @@ class _DetailsWidgetState extends StateMVC<DetailsWidget> {
                                       iconColor: Colors.white,
                                       labelColor: Colors.black),
                               // new ShoppingCartButtonWidget(
-                              //     iconColor: Theme.of(context).hintColor, labelColor: Theme.of(context).accentColor),
+                              //     iconColor: Theme.of(context).hintColor, labelColor: Theme.of(context).colorScheme.secondary),
                             ],
                           ),
                         ),

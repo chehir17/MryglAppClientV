@@ -14,17 +14,19 @@ class MapWidget extends StatefulWidget {
   RouteArgument routeArgument;
   final GlobalKey<ScaffoldState> parentScaffoldKey;
 
-  MapWidget({Key key, this.routeArgument, this.parentScaffoldKey}) : super(key: key);
+  MapWidget(
+      {Key? key, required this.routeArgument, required this.parentScaffoldKey})
+      : super(key: key);
 
-  @override 
+  @override
   _MapWidgetState createState() => _MapWidgetState();
 }
 
 class _MapWidgetState extends StateMVC<MapWidget> {
-  MapController _con;
+  late MapController _con;
 
   _MapWidgetState() : super(MapController()) {
-    _con = controller;
+    _con = controller as MapController;
   }
 
   @override
@@ -51,15 +53,21 @@ class _MapWidgetState extends StateMVC<MapWidget> {
         leading: _con.currentMarket?.latitude == null
             ? new IconButton(
                 icon: new Icon(Icons.sort, color: Theme.of(context).hintColor),
-                onPressed: () => widget.parentScaffoldKey.currentState.openDrawer(),
+                onPressed: () =>
+                    widget.parentScaffoldKey.currentState!.openDrawer(),
               )
             : IconButton(
-                icon: new Icon(Icons.arrow_back, color: Theme.of(context).hintColor),
-                onPressed: () => Navigator.of(context).pushNamed('/Pages', arguments: 2),
+                icon: new Icon(Icons.arrow_back,
+                    color: Theme.of(context).hintColor),
+                onPressed: () =>
+                    Navigator.of(context).pushNamed('/Pages', arguments: 2),
               ),
         title: Text(
           S.of(context).maps_explorer,
-          style: Theme.of(context).textTheme.title.merge(TextStyle(letterSpacing: 1.3)),
+          style: Theme.of(context)
+              .textTheme
+              .titleMedium!
+              .merge(TextStyle(letterSpacing: 1.3)),
         ),
         actions: <Widget>[
           IconButton(
@@ -77,7 +85,7 @@ class _MapWidgetState extends StateMVC<MapWidget> {
               color: Theme.of(context).hintColor,
             ),
             onPressed: () {
-              widget.parentScaffoldKey.currentState.openEndDrawer();
+              widget.parentScaffoldKey.currentState!.openEndDrawer();
             },
           ),
         ],

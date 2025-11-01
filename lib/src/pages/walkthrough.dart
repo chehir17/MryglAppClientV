@@ -1,6 +1,6 @@
+import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 
 import '../../generated/i18n.dart';
@@ -29,7 +29,7 @@ class Walkthrough extends StatelessWidget {
           padding: const EdgeInsets.only(left: 20),
           child: Text(
             S.of(context).skip,
-            style: TextStyle(color: Theme.of(context).accentColor),
+            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
           ),
         ),
       ),
@@ -43,12 +43,13 @@ class Walkthrough extends StatelessWidget {
               children: <Widget>[
                 Text(
                   S.of(context).login,
-                  style: TextStyle(color: Theme.of(context).accentColor),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
                 ),
                 SizedBox(width: 5),
                 Icon(
                   Icons.account_circle,
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
               ],
             )),
@@ -59,7 +60,7 @@ class Walkthrough extends StatelessWidget {
 
 class WalkthroughWidget extends StatefulWidget {
   WalkthroughWidget({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -67,10 +68,10 @@ class WalkthroughWidget extends StatefulWidget {
 }
 
 class _WalkthroughWidgetState extends StateMVC<WalkthroughWidget> {
-  WalkthroughController _con;
+  late WalkthroughController _con;
 
   _WalkthroughWidgetState() : super(WalkthroughController()) {
-    _con = controller;
+    _con = controller as WalkthroughController;
   }
 
   @override
@@ -83,8 +84,8 @@ class _WalkthroughWidgetState extends StateMVC<WalkthroughWidget> {
         pagination: SwiperPagination(
           margin: EdgeInsets.only(bottom: _ac.appHeight(10)),
           builder: DotSwiperPaginationBuilder(
-            activeColor: Theme.of(context).accentColor,
-            color: Theme.of(context).accentColor.withOpacity(0.2),
+            activeColor: Theme.of(context).colorScheme.secondary,
+            color: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
           ),
         ),
         itemBuilder: (context, index) {
@@ -96,7 +97,7 @@ class _WalkthroughWidgetState extends StateMVC<WalkthroughWidget> {
 }
 
 class WalkthroughItemWidget extends StatelessWidget {
-  WalkthroughItemWidget({Key key}) : super(key: key);
+  WalkthroughItemWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +129,7 @@ class WalkthroughItemWidget extends StatelessWidget {
                 SizedBox(height: 150),
                 Text(
                   S.of(context).maps_explorer,
-                  style: Theme.of(context).textTheme.title,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
                 SizedBox(height: 10),
                 Row(
@@ -147,7 +148,7 @@ class WalkthroughItemWidget extends StatelessWidget {
                         overflow: TextOverflow.fade,
                         softWrap: false,
                         maxLines: 1,
-                        style: Theme.of(context).textTheme.caption,
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ),
                   ],
@@ -157,7 +158,7 @@ class WalkthroughItemWidget extends StatelessWidget {
                   S.of(context).you_can_discover_markets,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 4,
-                  style: Theme.of(context).textTheme.body2,
+                  style: Theme.of(context).textTheme.bodySmall,
                 )
               ],
             ),

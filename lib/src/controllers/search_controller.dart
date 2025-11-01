@@ -121,7 +121,7 @@ class SearchController extends ControllerMVC {
           //   content: Text(S.current.this_product_was_added_to_cart),
           // ));
           Flushbar(
-            // title:  "Ooops !!",
+            // titleMedium:  "Ooops !!",
             message: S.current.this_product_was_added_to_cart,
             duration: Duration(seconds: 1),
             flushbarPosition: FlushbarPosition.BOTTOM,

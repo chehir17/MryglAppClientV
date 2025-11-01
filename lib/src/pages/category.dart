@@ -18,7 +18,7 @@ import '../elements/SubCategoriesCarouselItemWidget.dart';
 class CategoryWidget extends StatefulWidget {
   final RouteArgument routeArgument;
 
-  CategoryWidget({Key key, this.routeArgument}) : super(key: key);
+  CategoryWidget({Key? key, required this.routeArgument}) : super(key: key);
 
   @override
   _CategoryWidgetState createState() => _CategoryWidgetState();
@@ -29,10 +29,10 @@ class _CategoryWidgetState extends StateMVC<CategoryWidget> {
   String layout = 'grid';
   ScrollController scrollController = ScrollController();
 
-  CategoryController _con;
+  late CategoryController _con;
 
   _CategoryWidgetState() : super(CategoryController()) {
-    _con = controller;
+    _con = controller as CategoryController;
   }
 
   @override
@@ -74,7 +74,7 @@ class _CategoryWidgetState extends StateMVC<CategoryWidget> {
           S.of(context).category,
           style: Theme.of(context)
               .textTheme
-              .title
+              .titleMedium!
               .merge(TextStyle(letterSpacing: 0)),
         ),
         actions: <Widget>[
@@ -91,7 +91,7 @@ class _CategoryWidgetState extends StateMVC<CategoryWidget> {
                 )
               : ShoppingCartButtonWidget(
                   iconColor: Theme.of(context).hintColor,
-                  labelColor: Theme.of(context).accentColor),
+                  labelColor: Theme.of(context).colorScheme.secondary),
         ],
       ),
       body: RefreshIndicator(
@@ -107,7 +107,7 @@ class _CategoryWidgetState extends StateMVC<CategoryWidget> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: SearchBarWidget(onClickFilter: (filter) {
-                  _con.scaffoldKey.currentState.openEndDrawer();
+                  _con.scaffoldKey.currentState!.openEndDrawer();
                 }),
               ),
               SizedBox(height: 10),
@@ -123,7 +123,7 @@ class _CategoryWidgetState extends StateMVC<CategoryWidget> {
                     _con.category?.name ?? '',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.display1,
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -137,7 +137,7 @@ class _CategoryWidgetState extends StateMVC<CategoryWidget> {
                         icon: Icon(
                           Icons.format_list_bulleted,
                           color: this.layout == 'list'
-                              ? Theme.of(context).accentColor
+                              ? Theme.of(context).colorScheme.secondary
                               : Theme.of(context).focusColor,
                         ),
                       ),
@@ -150,7 +150,7 @@ class _CategoryWidgetState extends StateMVC<CategoryWidget> {
                         icon: Icon(
                           Icons.apps,
                           color: this.layout == 'grid'
-                              ? Theme.of(context).accentColor
+                              ? Theme.of(context).colorScheme.secondary
                               : Theme.of(context).focusColor,
                         ),
                       )
@@ -175,7 +175,7 @@ class _CategoryWidgetState extends StateMVC<CategoryWidget> {
               //         ),
               //       )
               //     : SizedBox(height: 0),
-              _con.category.subCategories.length > 0
+              _con.category.subCategories!.length > 0
                   ? Container(
                       height: 40,
                       // color: Colors.red,
@@ -183,10 +183,10 @@ class _CategoryWidgetState extends StateMVC<CategoryWidget> {
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
                         children: List.generate(
-                          _con.category.subCategories.length,
+                          _con.category.subCategories!.length,
                           (index) => InkWell(
                             onTap: () {
-                              if (_con.category.subCategories
+                              if (_con.category.subCategories!
                                       .elementAt(index)
                                       .id ==
                                   '-1') {
@@ -195,24 +195,24 @@ class _CategoryWidgetState extends StateMVC<CategoryWidget> {
                                 _con.selectedCat = '-1';
                               } else
                                 _con.listenForProductsByMarketSubCategory(
-                                  id: _con.category.subCategories
+                                  id: _con.category.subCategories!
                                       .elementAt(index)
                                       .id,
                                 );
                             },
                             child: PillsWidget(
-                              title: _con.category.subCategories
+                              titleMedium: _con.category.subCategories!
                                   .elementAt(index)
                                   .name,
                               width: false,
                               color: _con.selectedCat ==
-                                      _con.category.subCategories
+                                      _con.category.subCategories!
                                           .elementAt(index)
                                           .id
-                                  ? Theme.of(context).accentColor
+                                  ? Theme.of(context).colorScheme.secondary
                                   : Colors.white,
                               textColor: _con.selectedCat ==
-                                      _con.category.subCategories
+                                      _con.category.subCategories!
                                           .elementAt(index)
                                           .id
                                   ? Colors.white
@@ -282,7 +282,7 @@ class _CategoryWidgetState extends StateMVC<CategoryWidget> {
                                       // return object of type Dialog
                                       return AddToCartAlertDialogWidget(
                                           oldProduct:
-                                              _con.carts.elementAt(0)?.product,
+                                              _con.carts.elementAt(0).product!,
                                           newProduct:
                                               _con.products.elementAt(index),
                                           onPressed: (product, {reset: true}) {
@@ -335,7 +335,7 @@ class _CategoryWidgetState extends StateMVC<CategoryWidget> {
                                       // return object of type Dialog
                                       return AddToCartAlertDialogWidget(
                                           oldProduct:
-                                              _con.carts.elementAt(0)?.product,
+                                              _con.carts.elementAt(0).product!,
                                           newProduct:
                                               _con.products.elementAt(index),
                                           onPressed: (product, {reset: true}) {

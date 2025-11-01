@@ -17,7 +17,7 @@ import '../repository/user_repository.dart' as userRepo;
 Future<Stream<Order>> getOrders() async {
   User _user = userRepo.currentUser.value;
   if (_user.apiToken == null) {
-    return new Stream.value(null);
+    return new Stream.value(Order());
   }
   final String _apiToken = 'api_token=${_user.apiToken}&';
   final String url =
@@ -29,7 +29,7 @@ Future<Stream<Order>> getOrders() async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Order.fromJSON(data);
@@ -39,7 +39,7 @@ Future<Stream<Order>> getOrders() async {
 Future<Stream<Order>> getOrder(orderId) async {
   User _user = userRepo.currentUser.value;
   if (_user.apiToken == null) {
-    return new Stream.value(null);
+    return new Stream.value(Order()); //empty  order
   }
   final String _apiToken = 'api_token=${_user.apiToken}&';
   final String url =
@@ -50,7 +50,7 @@ Future<Stream<Order>> getOrder(orderId) async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .map((data) {
     return Order.fromJSON(data);
   });
@@ -59,7 +59,7 @@ Future<Stream<Order>> getOrder(orderId) async {
 Future<Stream<Order>> getRecentOrders() async {
   User _user = userRepo.currentUser.value;
   if (_user.apiToken == null) {
-    return new Stream.value(null);
+    return new Stream.value(Order());
   }
   final String _apiToken = 'api_token=${_user.apiToken}&';
   final String url =
@@ -71,7 +71,7 @@ Future<Stream<Order>> getRecentOrders() async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Order.fromJSON(data);
@@ -81,7 +81,7 @@ Future<Stream<Order>> getRecentOrders() async {
 Future<Stream<OrderStatus>> getOrderStatus() async {
   User _user = userRepo.currentUser.value;
   if (_user.apiToken == null) {
-    return new Stream.value(null);
+    return new Stream.value(OrderStatus());
   }
   final String _apiToken = 'api_token=${_user.apiToken}';
   final String url =
@@ -93,14 +93,14 @@ Future<Stream<OrderStatus>> getOrderStatus() async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return OrderStatus.fromJSON(data);
   });
 }
 
-Future<Order> addOrder(Order order, Payment payment) async {
+Future<Order?> addOrder(Order order, Payment payment) async {
   try {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     User _user = userRepo.currentUser.value;
@@ -123,7 +123,7 @@ Future<Order> addOrder(Order order, Payment payment) async {
     // print(params['delivery_address_id']);
     params.addAll(_creditCard.toMap());
     final response = await client.post(
-      url,
+      Uri.parse(url),
       headers: {HttpHeaders.contentTypeHeader: 'application/json'},
       body: json.encode(params),
     );

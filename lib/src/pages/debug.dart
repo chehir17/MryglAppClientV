@@ -9,7 +9,7 @@ import '../models/route_argument.dart';
 class DebugWidget extends StatefulWidget {
   RouteArgument routeArgument;
 
-  DebugWidget({Key key, this.routeArgument}) : super(key: key);
+  DebugWidget({Key? key, required this.routeArgument}) : super(key: key);
 
   @override
   _DebugWidgetState createState() {
@@ -18,10 +18,10 @@ class DebugWidget extends StatefulWidget {
 }
 
 class _DebugWidgetState extends StateMVC<DebugWidget> {
-  FavoriteController _con;
+  late FavoriteController _con;
 
   _DebugWidgetState() : super(FavoriteController()) {
-    _con = controller;
+    _con = controller as FavoriteController;
   }
 
   @override
@@ -40,7 +40,10 @@ class _DebugWidgetState extends StateMVC<DebugWidget> {
           centerTitle: true,
           title: Text(
             'Debug',
-            style: Theme.of(context).textTheme.title.merge(TextStyle(letterSpacing: 1.3)),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .merge(TextStyle(letterSpacing: 1.3)),
           ),
           actions: <Widget>[
             IconButton(
@@ -64,7 +67,8 @@ class _DebugWidgetState extends StateMVC<DebugWidget> {
                   },
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title: Text(_con.favorites.elementAt(index).product.name),
+                      title:
+                          Text(_con.favorites.elementAt(index).product!.name),
                     );
                   },
                 ),

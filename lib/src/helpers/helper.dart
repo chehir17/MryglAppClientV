@@ -2,18 +2,18 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-
+import 'package:html/dom.dart' as dom;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart';
 import 'package:markets/src/elements/CircularLoadingWidget.dart';
-import 'package:location_permissions/location_permissions.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:google_maps_flutter/google_maps_flutter.dart' as gmaps;
 
 import '../../generated/i18n.dart';
 import '../models/cart.dart';
@@ -37,11 +37,21 @@ class Helper {
   }
 
   static int getIntData(Map<String, dynamic> data) {
-    return (data['data'] as int) ?? 0;
+    return (data['data'] as int?) ?? 0;
   }
 
   static Future<void> locationPermission() async {
-    PermissionStatus permission = await LocationPermissions().requestPermissions();
+    // PermissionStatus permission = await LocationPermissions().requestPermissions();
+    PermissionStatus status = await Permission.location.request();
+
+    if (status.isGranted) {
+      print("Location permission granted");
+    } else if (status.isDenied) {
+      print("Location permission denied");
+    } else if (status.isPermanentlyDenied) {
+      print("Location permission permanently denied. Open app settings.");
+      openAppSettings();
+    }
   }
 
   static bool getBoolData(Map<String, dynamic> data) {
@@ -54,38 +64,47 @@ class Helper {
 
   static Future<Uint8List> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
     ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png)).buffer.asUint8List();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
   }
 
-  static Future<Marker> getMarker(Map<String, dynamic> res) async {
-    final Uint8List markerIcon = await getBytesFromAsset('assets/img/marker.png', 120);
-    final Marker marker = Marker(
-        markerId: MarkerId(res['id']),
-        icon: BitmapDescriptor.fromBytes(markerIcon),
-//        onTap: () {
-//          //print(res.name);
-//        },
-        anchor: Offset(0.5, 0.5),
-        infoWindow: InfoWindow(
-            title: res['name'],
-            snippet: res['distance'].toStringAsFixed(2) + ' mi',
-            onTap: () {
-              print('infowi tap');
-            }),
-        position: LatLng(double.parse(res['latitude']), double.parse(res['longitude'])));
+  static Future<gmaps.Marker> getMarker(Map<String, dynamic> res) async {
+    final Uint8List markerIcon =
+        await getBytesFromAsset('assets/img/marker.png', 120);
+    final gmaps.Marker marker = gmaps.Marker(
+      markerId: gmaps.MarkerId(res['id']),
+      icon: gmaps.BitmapDescriptor.fromBytes(markerIcon),
+      anchor: ui.Offset(0.5, 0.5),
+      infoWindow: gmaps.InfoWindow(
+        title: res['name'],
+        snippet: res['distance'].toStringAsFixed(2) + ' mi',
+        onTap: () {
+          print('infowi tap');
+        },
+      ),
+      position: gmaps.LatLng(
+        double.parse(res['latitude']),
+        double.parse(res['longitude']),
+      ),
+    );
 
     return marker;
   }
 
-  static Future<Marker> getMyPositionMarker(double latitude, double longitude) async {
-    final Uint8List markerIcon = await getBytesFromAsset('assets/img/my_marker.png', 120);
-    final Marker marker = Marker(
-        markerId: MarkerId(Random().nextInt(100).toString()),
-        icon: BitmapDescriptor.fromBytes(markerIcon),
-        anchor: Offset(0.5, 0.5),
-        position: LatLng(latitude, longitude));
+  static Future<gmaps.Marker> getMyPositionMarker(
+      double latitude, double longitude) async {
+    final Uint8List markerIcon =
+        await getBytesFromAsset('assets/img/my_marker.png', 120);
+    final gmaps.Marker marker = gmaps.Marker(
+      markerId: gmaps.MarkerId(Random().nextInt(100).toString()),
+      icon: gmaps.BitmapDescriptor.fromBytes(markerIcon),
+      anchor: ui.Offset(0.5, 0.5),
+      position: gmaps.LatLng(latitude, longitude),
+    );
 
     return marker;
   }
@@ -98,7 +117,8 @@ class Helper {
     if (rate - rate.floor() > 0) {
       list.add(Icon(Icons.star_half, size: size, color: Color(0xFFFFB24D)));
     }
-    list.addAll(List.generate(5 - rate.floor() - (rate - rate.floor()).ceil(), (index) {
+    list.addAll(
+        List.generate(5 - rate.floor() - (rate - rate.floor()).ceil(), (index) {
       return Icon(Icons.star_border, size: size, color: Color(0xFFFFB24D));
     }));
     return list;
@@ -122,31 +142,44 @@ class Helper {
 //    }
 //  }
 
-  static Widget getPrice(double myPrice, BuildContext context, {TextStyle style,bool currency = false}) {
+  static Widget getPrice(double myPrice, BuildContext context,
+      {TextStyle? style, bool currency = false}) {
     if (style != null) {
-      style = style.merge(TextStyle(fontSize: style.fontSize + 2));
+      style = style.merge(TextStyle(fontSize: style.fontSize! + 2));
     }
     try {
       return RichText(
         softWrap: false,
         overflow: TextOverflow.fade,
         maxLines: 1,
-        text: setting.value?.currencyRight != null && setting.value?.currencyRight == false ?
-             TextSpan(
-                text:currency == true ? setting.value?.defaultCurrency : '',
-                style: style ?? Theme.of(context).textTheme.subhead,
+        text: setting.value?.currencyRight != null &&
+                setting.value?.currencyRight == false
+            ? TextSpan(
+                text: currency == true ? setting.value?.defaultCurrency : '',
+                style: style ?? Theme.of(context).textTheme.titleMedium,
                 children: <TextSpan>[
-                  TextSpan(text: myPrice.toStringAsFixed(3) ?? '', style: style ?? Theme.of(context).textTheme.subhead),
+                  TextSpan(
+                      text: myPrice.toStringAsFixed(3) ?? '',
+                      style: style ?? Theme.of(context).textTheme.titleMedium),
                 ],
               )
             : TextSpan(
                 text: myPrice.toStringAsFixed(3) ?? '',
-                style: style ?? Theme.of(context).textTheme.subhead,
+                style: style ?? Theme.of(context).textTheme.titleMedium,
                 children: <TextSpan>[
                   TextSpan(
-                      text: currency == true ? setting.value?.defaultCurrency : '',
+                      text: currency == true
+                          ? setting.value?.defaultCurrency
+                          : '',
                       style: TextStyle(
-                          fontWeight: FontWeight.w400, fontSize: style != null ? style.fontSize - 4 : Theme.of(context).textTheme.subhead.fontSize - 4)),
+                          fontWeight: FontWeight.w400,
+                          fontSize: style != null
+                              ? style.fontSize! - 4
+                              : Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .fontSize! -
+                                  4)),
                 ],
               ),
       );
@@ -155,13 +188,13 @@ class Helper {
     }
   }
 
-  static double getTotalOrderPrice(ProductOrder productOrder, double tax, double deliveryFee,double couponValue) {
+  static double getTotalOrderPrice(ProductOrder productOrder, double tax,
+      double deliveryFee, double couponValue) {
     double total = productOrder.price * productOrder.quantity;
     productOrder.options.forEach((option) {
       total += option.price != null ? option.price : 0;
     });
-    if(couponValue > 0)
-    total -= total * (couponValue / 100);
+    if (couponValue > 0) total -= total * (couponValue / 100);
     total += deliveryFee;
     total += tax * total / 100;
     return total;
@@ -180,80 +213,103 @@ class Helper {
   }
 
   static String getDistance(double distance) {
-    String unit = setting.value.distanceUnit;
+    String unit = setting.value.distanceUnit!;
     if (unit == 'km') {
       distance *= 1.60934;
     }
-    return distance != null ? distance.toStringAsFixed(2) + " " + trans(unit) : "";
+    return distance != null
+        ? distance.toStringAsFixed(2) + " " + trans(unit)
+        : "";
   }
 
-  static bool canDelivery(Market _market, {List<Cart> carts}) {
+  static bool canDelivery(Market _market, {List<Cart>? carts}) {
     bool _can = true;
     carts?.forEach((Cart _cart) {
-      _can &= _cart.product.deliverable;
+      _can &= _cart.product!.deliverable;
     });
-    _can &= _market.availableForDelivery && (_market.distance <= _market.deliveryRange);
+    _can &= _market.availableForDelivery! &&
+        (_market.distance! <= _market.deliveryRange!);
     return _can;
   }
 
   static String skipHtml(String htmlString) {
     var document = parse(htmlString);
-    String parsedString = parse(document.body.text).documentElement.text;
+    String parsedString = parse(document.body!.text).documentElement!.text;
     return parsedString;
   }
 
   static Future<int> getInstallDate() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if(!prefs.containsKey('install_date')){
+    if (!prefs.containsKey('install_date')) {
       prefs.setString('install_date', DateTime.now().toString());
       return 0;
     }
 
     final installDate = prefs.getString('install_date');
     final dateNow = DateTime.now();
-    final difference = dateNow.difference(DateTime.parse(installDate)).inDays;
+    final difference = dateNow.difference(DateTime.parse(installDate!)).inDays;
 
     return difference;
   }
 
   static Future<bool> getFirstShow() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if(prefs.containsKey('show_dialog')){
+    if (prefs.containsKey('show_dialog')) {
       return true;
-    } 
-    
+    }
+
     prefs.setBool('show_dialog', true);
     return false;
   }
 
-  static Html applyHtml(context, String html, {TextStyle style}) {
+// static Html applyHtml(context, String html, {TextStyle? style}) {
+//   return Html(
+//     data: html,
+//     style: {
+//       "body": Style(
+//         margin: Margins.zero,
+//         padding: EdgeInsets.zero,
+//         fontSize: FontSize(14),
+//         ..merge(Style.fromTextStyle(style ?? Theme.of(context).textTheme.bodySmall!)),
+//       ),
+//       "p": Style(
+//         margin: Margins.zero,
+//         padding: EdgeInsets.zero,
+//       ),
+//     },
+//     customRenders: {
+//       tagMatcher("br"): CustomRender.widget(widget: (context, child) => const SizedBox(height: 0)),
+//       tagMatcher("p"): CustomRender.widget(widget: (context, child) => Padding(
+//         padding: const EdgeInsets.only(top: 0, bottom: 0),
+//         child: Container(
+//           width: double.infinity,
+//           child: Wrap(
+//             crossAxisAlignment: WrapCrossAlignment.center,
+//             alignment: WrapAlignment.start,
+//             children: [child!],
+//           ),
+//         ),
+//       )),
+//     },
+//   );
+// }
+
+  static Html applyHtml(context, String html, {TextStyle? style}) {
+    final baseStyle =
+        Style.fromTextStyle(style ?? Theme.of(context).textTheme.bodySmall!);
+
     return Html(
-      blockSpacing: 0,
       data: html,
-      defaultTextStyle: style ?? Theme.of(context).textTheme.body2.merge(TextStyle(fontSize: 14)),
-      useRichText: false,
-      customRender: (node, children) {
-        if (node is dom.Element) {
-          switch (node.localName) {
-            case "br":
-              return SizedBox(
-                height: 0,
-              );
-            case "p":
-              return Padding(
-                padding: EdgeInsets.only(top: 0, bottom: 0),
-                child: Container(
-                  width: double.infinity,
-                  child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    alignment: WrapAlignment.start,
-                    children: children,
-                  ),
-                ),
-              );
-          }
-        }
-        return null;
+      style: {
+        "body": Style(
+          margin: Margins.zero,
+          padding: HtmlPaddings.zero,
+          fontSize: FontSize(14),
+        ).merge(baseStyle),
+        "p": Style(
+          margin: Margins.zero,
+          padding: HtmlPaddings.zero,
+        ),
       },
     );
   }
@@ -283,8 +339,10 @@ class Helper {
     });
   }
 
-  static String limitString(String text, {int limit = 24, String hiddenText = "..."}) {
-    return text.substring(0, min<int>(limit, text.length)) + (text.length > limit ? hiddenText : '');
+  static String limitString(String text,
+      {int limit = 24, String hiddenText = "..."}) {
+    return text.substring(0, min<int>(limit, text.length)) +
+        (text.length > limit ? hiddenText : '');
   }
 
   static String getCreditCardNumber(String number) {

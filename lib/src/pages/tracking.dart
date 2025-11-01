@@ -15,31 +15,34 @@ import '../models/route_argument.dart';
 class TrackingWidget extends StatefulWidget {
   RouteArgument routeArgument;
 
-  TrackingWidget({Key key, this.routeArgument}) : super(key: key);
+  TrackingWidget({Key? key, required this.routeArgument}) : super(key: key);
 
   @override
   _TrackingWidgetState createState() => _TrackingWidgetState();
 }
 
 class _TrackingWidgetState extends StateMVC<TrackingWidget> {
-  TrackingController _con;
+  late TrackingController _con;
 
   _TrackingWidgetState() : super(TrackingController()) {
-    _con = controller;
+    _con = controller as TrackingController;
   }
 
   @override
   void initState() {
     _con.listenForOrder(orderId: widget.routeArgument.id);
-    _con.id = widget.routeArgument.id;
+    _con.id = widget.routeArgument.id!;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).copyWith(
-        dividerColor: Colors.transparent,
-        accentColor: Theme.of(context).accentColor);
+      dividerColor: Colors.transparent,
+      colorScheme: Theme.of(context).colorScheme.copyWith(
+            secondary: Theme.of(context).colorScheme.secondary,
+          ),
+    );
     return Scaffold(
         key: _con.scaffoldKey,
         floatingActionButton: _con.order?.review == false
@@ -78,13 +81,13 @@ class _TrackingWidgetState extends StateMVC<TrackingWidget> {
             S.of(context).tracking_order,
             style: Theme.of(context)
                 .textTheme
-                .title
+                .titleMedium!
                 .merge(TextStyle(letterSpacing: 1.3)),
           ),
           actions: <Widget>[
             new ShoppingCartButtonWidget(
                 iconColor: Theme.of(context).hintColor,
-                labelColor: Theme.of(context).accentColor),
+                labelColor: Theme.of(context).colorScheme.secondary),
           ],
         ),
         body: _con.order == null || _con.orderStatus.isEmpty
@@ -109,19 +112,19 @@ class _TrackingWidgetState extends StateMVC<TrackingWidget> {
                                         child: Text(
                                             '${S.of(context).order_id}: #${_con.order.id}')),
                                     Text(
-                                      '${_con.order.orderStatus.status}',
+                                      '${_con.order.orderStatus!.status}',
                                       style:
-                                          Theme.of(context).textTheme.caption,
+                                          Theme.of(context).textTheme.bodySmall,
                                     ),
                                   ],
                                 ),
                                 children: List.generate(
-                                    _con.order.productOrders.length,
+                                    _con.order.productOrders!.length,
                                     (indexProduct) {
                                   return OrderItemWidget(
                                       heroTag: 'tracking_orders',
                                       order: _con.order,
-                                      productOrder: _con.order.productOrders
+                                      productOrder: _con.order.productOrders!
                                           .elementAt(indexProduct));
                                 }),
                               ),
@@ -130,18 +133,18 @@ class _TrackingWidgetState extends StateMVC<TrackingWidget> {
                               padding: const EdgeInsets.all(12),
                               child: Theme(
                                 data: ThemeData(
-                                  primaryColor: Theme.of(context).accentColor,
+                                  primaryColor:
+                                      Theme.of(context).colorScheme.secondary,
                                 ),
                                 child: Stepper(
                                   physics: ClampingScrollPhysics(),
                                   controlsBuilder: (BuildContext context,
-                                      {VoidCallback onStepContinue,
-                                      VoidCallback onStepCancel}) {
+                                      ControlsDetails details) {
                                     return SizedBox(height: 0);
                                   },
                                   steps: _con.getTrackingSteps(context),
                                   currentStep: int.tryParse(
-                                          this._con.order.orderStatus.id) -
+                                          this._con.order.orderStatus!.id)! -
                                       1,
                                 ),
                               ),
@@ -161,14 +164,16 @@ class _TrackingWidgetState extends StateMVC<TrackingWidget> {
                                           height: 55,
                                           width: 55,
                                           decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(5)),
-                                              color: Theme.of(context)
-                                                          .brightness ==
-                                                      Brightness.light
-                                                  ? Colors.black38
-                                                  : Theme.of(context)
-                                                      .backgroundColor),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5)),
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.light
+                                                    ? Colors.black38
+                                                    : Theme.of(context)
+                                                        .colorScheme
+                                                        .background,
+                                          ),
                                           child: Icon(
                                             Icons.place,
                                             color:
@@ -190,7 +195,7 @@ class _TrackingWidgetState extends StateMVC<TrackingWidget> {
                                                 softWrap: false,
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .subhead,
+                                                    .titleSmall,
                                               ),
                                               Text(
                                                 _con.order.deliveryAddress
@@ -200,7 +205,7 @@ class _TrackingWidgetState extends StateMVC<TrackingWidget> {
                                                 maxLines: 3,
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .caption,
+                                                    .bodySmall,
                                               ),
                                             ],
                                           ),
@@ -244,8 +249,8 @@ class _TrackingWidgetState extends StateMVC<TrackingWidget> {
                               padding: const EdgeInsets.all(5.0),
                               child: BottomPriceWidget(_con.order),
                             ),
-                            // Text(S.of(context).how_would_you_rate_this_market, style: Theme.of(context).textTheme.subhead),
-                            // Text(S.of(context).click_on_the_stars_below_to_leave_comments, style: Theme.of(context).textTheme.caption),
+                            // Text(S.of(context).how_would_you_rate_this_market, style: Theme.of(context).textTheme.titleSmall),
+                            // Text(S.of(context).click_on_the_stars_below_to_leave_comments, style: Theme.of(context).textTheme.bodySmall),
                             // SizedBox(height: 5),
                             // FlatButton(
                             //   onPressed: () {

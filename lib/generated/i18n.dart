@@ -11,12 +11,12 @@ import 'package:flutter/material.dart';
 class S implements WidgetsLocalizations {
   const S();
 
-  static S current;
+  static S current = S();
 
   static const GeneratedLocalizationsDelegate delegate =
       GeneratedLocalizationsDelegate();
 
-  static S of(BuildContext context) => Localizations.of<S>(context, S);
+  static S of(BuildContext context) => Localizations.of<S>(context, S)!;
 
   @override
   TextDirection get textDirection => TextDirection.ltr;
@@ -281,6 +281,59 @@ class S implements WidgetsLocalizations {
   String the_product_was_removed_from_your_cart(String productName) =>
       "The $productName was removed from your cart";
   String get the_minimum_price => "The price must be greater or equal to : ";
+
+  //missing params ///////////////////////////////////////////////////////
+  @override
+  // TODO: implement copyButtonLabel
+  String get copyButtonLabel => throw UnimplementedError();
+
+  @override
+  // TODO: implement cutButtonLabel
+  String get cutButtonLabel => throw UnimplementedError();
+
+  @override
+  // TODO: implement lookUpButtonLabel
+  String get lookUpButtonLabel => throw UnimplementedError();
+
+  @override
+  // TODO: implement pasteButtonLabel
+  String get pasteButtonLabel => throw UnimplementedError();
+
+  @override
+  // TODO: implement reorderItemDown
+  String get reorderItemDown => throw UnimplementedError();
+
+  @override
+  // TODO: implement reorderItemLeft
+  String get reorderItemLeft => throw UnimplementedError();
+
+  @override
+  // TODO: implement reorderItemRight
+  String get reorderItemRight => throw UnimplementedError();
+
+  @override
+  // TODO: implement reorderItemToEnd
+  String get reorderItemToEnd => throw UnimplementedError();
+
+  @override
+  // TODO: implement reorderItemToStart
+  String get reorderItemToStart => throw UnimplementedError();
+
+  @override
+  // TODO: implement reorderItemUp
+  String get reorderItemUp => throw UnimplementedError();
+
+  @override
+  // TODO: implement searchWebButtonLabel
+  String get searchWebButtonLabel => throw UnimplementedError();
+
+  @override
+  // TODO: implement selectAllButtonLabel
+  String get selectAllButtonLabel => throw UnimplementedError();
+
+  @override
+  // TODO: implement shareButtonLabel
+  String get shareButtonLabel => throw UnimplementedError();
 }
 
 class $ar extends S {
@@ -1666,20 +1719,20 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
   }
 
   LocaleListResolutionCallback listResolution(
-      {Locale fallback, bool withCountry = true}) {
-    return (List<Locale> locales, Iterable<Locale> supported) {
+      {Locale? fallback, bool withCountry = true}) {
+    return (List<Locale>? locales, Iterable<Locale> supported) {
       if (locales == null || locales.isEmpty) {
         return fallback ?? supported.first;
       } else {
-        return _resolve(locales.first, fallback, supported, withCountry);
+        return _resolve(locales.first, fallback!, supported, withCountry);
       }
     };
   }
 
   LocaleResolutionCallback resolution(
-      {Locale fallback, bool withCountry = true}) {
-    return (Locale locale, Iterable<Locale> supported) {
-      return _resolve(locale, fallback, supported, withCountry);
+      {Locale? fallback, bool withCountry = true}) {
+    return (Locale? locale, Iterable<Locale> supported) {
+      return _resolve(locale!, fallback!, supported, withCountry);
     };
   }
 
@@ -1753,7 +1806,7 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
         // If no country requirement is requested, check if this locale has no country.
         if (true != withCountry &&
             (supportedLocale.countryCode == null ||
-                supportedLocale.countryCode.isEmpty)) {
+                supportedLocale.countryCode!.isEmpty)) {
           return true;
         }
       }
@@ -1762,8 +1815,10 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
   }
 }
 
-String getLang(Locale l) => l == null
-    ? null
-    : l.countryCode != null && l.countryCode.isEmpty
-        ? l.languageCode
-        : l.toString();
+String getLang(Locale? l) {
+  if (l == null) return 'unknown'; // or return '' if you prefer
+  if (l.countryCode == null || l.countryCode!.isEmpty) {
+    return l.languageCode;
+  }
+  return l.toString();
+}

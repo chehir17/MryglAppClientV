@@ -38,7 +38,7 @@ Future<Stream<Market>> getNearMarkets(
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Market.fromJSON(data);
@@ -72,7 +72,7 @@ Future<Stream<Market>> getRests(
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Market.fromJSON(data);
@@ -95,7 +95,7 @@ Future<Stream<Market>> searchMarkets(String search, Address address) async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Market.fromJSON(data);
@@ -121,7 +121,7 @@ Future<Stream<Market>> getMarket(String id, Address address) async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .map((data) => Market.fromJSON(data));
 }
 
@@ -135,7 +135,7 @@ Future<Stream<Review>> getMarketReviews(String id) async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Review.fromJSON(data);
@@ -152,7 +152,7 @@ Future<Stream<Review>> getRecentReviews() async {
   return streamedRest.stream
       .transform(utf8.decoder)
       .transform(json.decoder)
-      .map((data) => Helper.getData(data))
+      .map((data) => Helper.getData(data as Map<String, dynamic>))
       .expand((data) => (data as List))
       .map((data) {
     return Review.fromJSON(data);
@@ -166,7 +166,7 @@ Future<Review> addMarketReview(Review review, Market market, orderid) async {
   review.user = currentUser.value;
   review.orderId = orderid;
   final response = await client.post(
-    url,
+    Uri.parse(url),
     headers: {HttpHeaders.contentTypeHeader: 'application/json'},
     body: json.encode(review.ofMarketToMap(market)),
   );

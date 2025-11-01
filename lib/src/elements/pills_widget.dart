@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
 class PillsWidget extends StatelessWidget {
-  final String title;
-  final Color color;
-  final Color textColor;
-  final double height;
-  final FontWeight fontWeight;
-  final EdgeInsetsGeometry padding;
-  final Color borderColor;
-  final bool width;
+  final String? titleMedium;
+  final Color? color;
+  final Color? textColor;
+  final double? height;
+  final FontWeight? fontWeight;
+  final EdgeInsetsGeometry? padding;
+  final Color? borderColor;
+  final bool? width;
 
   const PillsWidget(
-      {Key key,
-      this.title,
+      {Key? key,
+      this.titleMedium,
       this.color,
       this.textColor,
       this.height,
@@ -31,11 +31,11 @@ class PillsWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: this.color,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Theme.of(context).accentColor),
+        border: Border.all(color: Theme.of(context).colorScheme.secondary),
       ),
       child: Center(
         child: Text(
-          this.title,
+          this.titleMedium!,
           style: TextStyle(
             fontSize: 14.5,
             color: this.textColor,

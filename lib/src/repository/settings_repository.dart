@@ -16,15 +16,15 @@ import '../models/address.dart';
 import '../models/setting.dart';
 
 ValueNotifier<Setting> setting = new ValueNotifier(new Setting());
-ValueNotifier<Address> deliveryAddress = new ValueNotifier(new Address());
+ValueNotifier<Address> deliveryAddress = new ValueNotifier(new Address.empty());
 //LocationData locationData;
 
 Future<Setting> initSettings() async {
   Setting _setting;
   final String url =
       '${GlobalConfiguration().getString('api_base_url')}settings';
-  final response = await http
-      .get(url, headers: {HttpHeaders.contentTypeHeader: 'application/json'});
+  final response = await http.get(Uri.parse(url),
+      headers: {HttpHeaders.contentTypeHeader: 'application/json'});
   if (response.statusCode == 200 &&
       response.headers.containsValue('application/json')) {
     if (json.decode(response.body)['data'] != null) {
@@ -32,9 +32,15 @@ Future<Setting> initSettings() async {
       await prefs.setString(
           'settings', json.encode(json.decode(response.body)['data']));
       _setting = Setting.fromJSON(json.decode(response.body)['data']);
+      // if (prefs.containsKey('language')) {
+      //   _setting.mobileLanguage =
+      //       new ValueNotifier(Locale(prefs.get('language'), ''));
+      // }
       if (prefs.containsKey('language')) {
-        _setting.mobileLanguage =
-            new ValueNotifier(Locale(prefs.get('language'), ''));
+        final String? lang = prefs.getString('language');
+        if (lang != null) {
+          _setting.mobileLanguage = ValueNotifier(Locale(lang, ''));
+        }
       }
       setting.value = _setting;
       setting.notifyListeners();
@@ -52,8 +58,8 @@ Future<dynamic> setCurrentLocation() async {
     try {
       location.getLocation().then((_locationData) async {
         String _addressName = await mapsUtil.getAddressName(
-            new LatLng(_locationData?.latitude, _locationData?.longitude),
-            setting.value.googleMapsKey);
+            new LatLng(_locationData.latitude!, _locationData.longitude!),
+            setting.value.googleMapsKey!);
         _address = Address.fromJSON({
           'address': _addressName,
           'latitude': _locationData?.latitude,
@@ -88,15 +94,18 @@ Future<Address> changeCurrentLocation(Address _address) async {
 
 Future<Address> getCurrentLocation() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-//  await prefs.clear();
+  // await prefs.clear();
+
   if (prefs.containsKey('delivery_address')) {
-    deliveryAddress.value =
-        Address.fromJSON(json.decode(prefs.getString('delivery_address')));
-    return deliveryAddress.value;
-  } else {
-    deliveryAddress.value = Address.fromJSON({});
-    return Address.fromJSON({});
+    final String? addressString = prefs.getString('delivery_address');
+    if (addressString != null && addressString.isNotEmpty) {
+      deliveryAddress.value = Address.fromJSON(json.decode(addressString));
+      return deliveryAddress.value;
+    }
   }
+
+  deliveryAddress.value = Address.fromJSON({});
+  return deliveryAddress.value;
 }
 
 void setBrightness(Brightness brightness) async {
@@ -116,7 +125,7 @@ Future<void> setDefaultLanguage(String language) async {
 Future<String> getDefaultLanguage(String defaultLanguage) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   if (prefs.containsKey('language')) {
-    defaultLanguage = await prefs.get('language');
+    defaultLanguage = prefs.getString('language') ?? defaultLanguage;
   }
   return defaultLanguage;
 }

@@ -54,7 +54,7 @@ class SearchBarWidget extends StatelessWidget {
             //   },
             //   child: Padding(
             //     padding: const EdgeInsets.only(right: 5, left: 5, top: 3, bottom: 3),
-            //     child: Icon(Icons.filter_list, color: Theme.of(context).accentColor),
+            //     child: Icon(Icons.filter_list, color: Theme.of(context).colorScheme.secondary),
             //   ),
             // ),
           ],

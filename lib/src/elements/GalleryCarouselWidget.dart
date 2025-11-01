@@ -6,10 +6,12 @@ import '../models/gallery.dart';
 class ImageThumbCarouselWidget extends StatefulWidget {
   List<Gallery> galleriesList;
 
-  ImageThumbCarouselWidget({Key key, this.galleriesList}) : super(key: key);
+  ImageThumbCarouselWidget({Key? key, required this.galleriesList})
+      : super(key: key);
 
   @override
-  _ImageThumbCarouselWidgetState createState() => _ImageThumbCarouselWidgetState();
+  _ImageThumbCarouselWidgetState createState() =>
+      _ImageThumbCarouselWidgetState();
 }
 
 class _ImageThumbCarouselWidgetState extends State<ImageThumbCarouselWidget> {
@@ -26,10 +28,12 @@ class _ImageThumbCarouselWidgetState extends State<ImageThumbCarouselWidget> {
                 double _marginLeft = 0;
                 (index == 0) ? _marginLeft = 20 : _marginLeft = 0;
                 return InkWell(
-                  splashColor: Theme.of(context).accentColor.withOpacity(0.8),
+                  splashColor:
+                      Theme.of(context).colorScheme.secondary.withOpacity(0.8),
                   highlightColor: Colors.transparent,
                   onTap: () {},
-                  child: GalleryItemWidget(gallery: widget.galleriesList.elementAt(index)),
+                  child: GalleryItemWidget(
+                      gallery: widget.galleriesList.elementAt(index)),
                 );
               },
             ),

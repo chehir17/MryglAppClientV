@@ -7,6 +7,8 @@ class Paginate {
   Paginate(this.currentPage,
       {this.lastPage = 0, this.nextPageUrl = '', this.prevPageUrl = ''});
 
+  Paginate.empty();
+
   Paginate.fromJSON(Map<String, dynamic> jsonMap) {
     try {
       // print(jsonMap);

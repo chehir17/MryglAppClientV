@@ -10,7 +10,11 @@ class ProductGridItemWidget extends StatefulWidget {
   final Product product;
   final VoidCallback onPressed;
 
-  ProductGridItemWidget({Key? key, this.heroTag, this.product, this.onPressed})
+  ProductGridItemWidget(
+      {Key? key,
+      required this.heroTag,
+      required this.product,
+      required this.onPressed})
       : super(key: key);
 
   @override
@@ -24,7 +28,7 @@ class _ProductGridItemWidgetState extends State<ProductGridItemWidget> {
     final bool isRTL = currentDirection == TextDirection.rtl;
     return InkWell(
       highlightColor: Colors.transparent,
-      splashColor: Theme.of(context).accentColor.withOpacity(0.08),
+      splashColor: Theme.of(context).colorScheme.secondary.withOpacity(0.08),
       onTap: () {
         if (widget.product.inStock)
           Navigator.of(context).pushNamed('/Product',
@@ -45,16 +49,16 @@ class _ProductGridItemWidgetState extends State<ProductGridItemWidget> {
                   child: Container(
                       // height: 150,
                       decoration: BoxDecoration(
-                        // color: Theme.of(context).accentColor.withOpacity(0.3),
+                        // color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
                         image: DecorationImage(
                             image: CachedNetworkImageProvider(
-                                this.widget.product.image.url),
+                                this.widget.product.image.url!),
                             fit: BoxFit.fill,
                             colorFilter: !widget.product.inStock
                                 ? new ColorFilter.mode(
                                     Colors.black.withOpacity(0.2),
                                     BlendMode.dstIn)
-                                : ColorFilter.mode(null, null)),
+                                : null),
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Center(
@@ -80,7 +84,7 @@ class _ProductGridItemWidgetState extends State<ProductGridItemWidget> {
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: Text(
                   widget.product.name,
-                  style: Theme.of(context).textTheme.body2,
+                  style: Theme.of(context).textTheme.bodySmall,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -94,7 +98,7 @@ class _ProductGridItemWidgetState extends State<ProductGridItemWidget> {
                       '${widget.product.capacity != "null" ? widget.product.capacity : ""} ${widget.product.unit != "null" ? widget.product.unit : ""}',
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
-                      style: Theme.of(context).textTheme.caption.merge(
+                      style: Theme.of(context).textTheme.bodySmall!.merge(
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                     ),
                   ],
@@ -119,7 +123,7 @@ class _ProductGridItemWidgetState extends State<ProductGridItemWidget> {
                           decoration: BoxDecoration(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(20)),
-                              color: Theme.of(context).accentColor),
+                              color: Theme.of(context).colorScheme.secondary),
                           alignment: AlignmentDirectional.topEnd,
                           child: Center(
                             child: Helper.getPrice(
@@ -127,7 +131,7 @@ class _ProductGridItemWidgetState extends State<ProductGridItemWidget> {
                               context,
                               style: Theme.of(context)
                                   .textTheme
-                                  .body2
+                                  .bodySmall!
                                   .merge(TextStyle(
                                     color: Theme.of(context).primaryColor,
                                     fontSize: 12,
@@ -140,7 +144,7 @@ class _ProductGridItemWidgetState extends State<ProductGridItemWidget> {
                                 widget.product.discountPrice, context,
                                 style: Theme.of(context)
                                     .textTheme
-                                    .subtitle2
+                                    .titleMedium!
                                     .merge(TextStyle(
                                         decoration: TextDecoration.lineThrough,
                                         fontSize: 11)))
@@ -159,8 +163,15 @@ class _ProductGridItemWidgetState extends State<ProductGridItemWidget> {
                     margin: EdgeInsets.all(10),
                     width: 40,
                     height: 40,
-                    child: FlatButton(
-                      padding: EdgeInsets.all(0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.all(0),
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.9),
+                        shape: StadiumBorder(),
+                      ),
                       onPressed: () {
                         widget.onPressed();
                       },
@@ -169,8 +180,6 @@ class _ProductGridItemWidgetState extends State<ProductGridItemWidget> {
                         color: Theme.of(context).primaryColor,
                         size: 24,
                       ),
-                      color: Theme.of(context).accentColor.withOpacity(0.9),
-                      shape: StadiumBorder(),
                     ),
                   ),
                 )
@@ -184,7 +193,7 @@ class _ProductGridItemWidgetState extends State<ProductGridItemWidget> {
           //     // width: 60,
           //     // height: 100,
           //     decoration: BoxDecoration(
-          //       // color: Theme.of(context).accentColor.withOpacity(0.3),
+          //       // color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
           //       // borderRadius: BorderRadius.all(Radius.circular(20)),
           //       // image: DecorationImage(image: AssetImage('assets/img/sold-out.png'), fit: BoxFit.fill,)
           //     ),

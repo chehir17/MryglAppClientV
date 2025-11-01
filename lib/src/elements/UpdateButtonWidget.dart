@@ -60,7 +60,7 @@ class _UpdateButtonWidgetState extends StateMVC<UpdateButtonWidget> {
             //   child: Text(
             //     _con.cartCount.toString(),
             //     textAlign: TextAlign.center,
-            //     style: Theme.of(context).textTheme.caption.merge(
+            //     style: Theme.of(context).textTheme.bodySmall.merge(
             //           TextStyle(color: Theme.of(context).primaryColor, fontSize: 10),
             //         ),
             //   ),

@@ -8,17 +8,25 @@ import '../models/route_argument.dart';
 class FavoriteGridItemWidget extends StatelessWidget {
   String heroTag;
   Favorite favorite;
-  VoidCallback onPress ;
+  VoidCallback onPress;
 
-  FavoriteGridItemWidget({Key key, this.heroTag, this.favorite,this.onPress}) : super(key: key);
+  FavoriteGridItemWidget(
+      {Key? key,
+      required this.heroTag,
+      required this.favorite,
+      required this.onPress})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return InkWell(
       highlightColor: Colors.transparent,
-      splashColor: Theme.of(context).accentColor.withOpacity(0.08),
+      splashColor: Theme.of(context).colorScheme.secondary.withOpacity(0.08),
       onTap: () {
-        Navigator.of(context)
-            .pushNamed('/Product', arguments: new RouteArgument(heroTag: this.heroTag, id: this.favorite.product.id,marketID:this.favorite.product.market.id));
+        Navigator.of(context).pushNamed('/Product',
+            arguments: new RouteArgument(
+                heroTag: this.heroTag,
+                id: this.favorite.product!.id,
+                marketID: this.favorite.product!.market.id));
       },
       child: Stack(
         alignment: AlignmentDirectional.topEnd,
@@ -28,10 +36,13 @@ class FavoriteGridItemWidget extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: Hero(
-                  tag: heroTag + favorite.product.id,
+                  tag: heroTag + favorite.product!.id,
                   child: Container(
                     decoration: BoxDecoration(
-                      image: DecorationImage(image: CachedNetworkImageProvider(this.favorite.product.image.thumb), fit: BoxFit.cover),
+                      image: DecorationImage(
+                          image: CachedNetworkImageProvider(
+                              this.favorite.product!.image.thumb!),
+                          fit: BoxFit.cover),
                       borderRadius: BorderRadius.circular(5),
                     ),
                   ),
@@ -39,14 +50,14 @@ class FavoriteGridItemWidget extends StatelessWidget {
               ),
               SizedBox(height: 5),
               Text(
-                favorite.product.name,
-                style: Theme.of(context).textTheme.body2,
+                favorite.product!.name,
+                style: Theme.of(context).textTheme.bodySmall,
                 overflow: TextOverflow.ellipsis,
               ),
               SizedBox(height: 2),
               Text(
-                favorite.product.market.name,
-                style: Theme.of(context).textTheme.caption,
+                favorite.product!.market.name!,
+                style: Theme.of(context).textTheme.bodySmall,
                 overflow: TextOverflow.ellipsis,
               )
             ],
@@ -55,16 +66,19 @@ class FavoriteGridItemWidget extends StatelessWidget {
             margin: EdgeInsets.all(10),
             width: 40,
             height: 40,
-            child: FlatButton(
-              padding: EdgeInsets.all(0),
-              onPressed:  onPress,
-              child: Icon( 
+            child: ElevatedButton(
+              onPressed: onPress,
+              child: Icon(
                 Icons.restore_from_trash,
                 color: Theme.of(context).primaryColor,
                 size: 24,
               ),
-              color: Theme.of(context).accentColor.withOpacity(0.9),
-              shape: StadiumBorder(),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.all(0),
+                backgroundColor:
+                    Theme.of(context).colorScheme.secondary.withOpacity(0.9),
+                shape: StadiumBorder(),
+              ),
             ),
           ),
         ],
